@@ -16,17 +16,16 @@ struct list create(){
 //destruction
 void destroy(struct list *self){
     while(!is_empty(self)){
-        del(self->previous);
+        del(self->first);
     }
     free(self);
 }
 
 //ajout
-void add(struct list *self, int value){ //insertion en dbut de la liste doublement chainée
+void add(struct list *self, int value){ //insertion en début de la liste chainée
     struct list_node *other = malloc(sizeof(struct list_node));
     other->next = self->first;
     self->first = other;
-    //TODO penser à gérer le previous
 }
 
 //suppression
@@ -34,10 +33,20 @@ void del(struct list_node *node){
     node->previous->next = node->next;
     node->next = NULL;
     free(node);
-    //TODO gérer l'autre chainage
-    //TODO check s'il reste un node, sinon mettre le list first à nul ?
 }
 
+//parcours
+void visit(const struct list *self){
+    struct list_node *visit = malloc(sizeof(struct list_node));
+    visit->next = self->first;
+    while(visit->next != NULL){
+        visit->next = visit->next->next;
+        size++;
+    }
+    visit->next = NULL;
+    free(visit);
+}
+/*
 //parcours en profondeur
 void dfs(const struct list *self){ //depth first search
     //TODO
@@ -47,7 +56,7 @@ void dfs(const struct list *self){ //depth first search
 void bfs(const struct list *self){ //breadth first search
     //TODO
 }
-
+*/
 //vide
 int is_empty(const struct list *self){
     if (self->first == NULL){

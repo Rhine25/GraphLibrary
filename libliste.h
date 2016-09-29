@@ -4,7 +4,6 @@
 struct list_node {
 	int data;
 	struct list_node *next;
-        struct list_node *previous;
 };
 struct list {
 	struct list_node *first;
@@ -22,12 +21,15 @@ void add(struct list, int);
 //suppression
 void del(struct list_node);
 
+//parcours
+void visit(const struct list);
+/*
 //parcours en profondeur
 void dfs(const struct list); //depth first search
 
 //parcours en largeur
 void bfs(const struct list); //breadth first search
-
+*/
 //vide
 int is_empty(const struct list);
 
