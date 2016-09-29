@@ -5,10 +5,10 @@ struct list_node {
 	int data;
 	struct list_node *next;
         struct list_node *previous;
-};
+}list_node;
 struct list {
 	struct list_node *first;
-};
+}list;
 
 //creation
 struct list create();
