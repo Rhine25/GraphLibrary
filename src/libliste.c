@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "libliste.h"
-
-//TODO vérifier les passages du début à la fin des listes pour les next
-//TODO does a list finish with null or returns to the first node?
+#include "../include/libliste.h"
 
 //creation
 struct list create(){

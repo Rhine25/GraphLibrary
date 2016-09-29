@@ -1,5 +1,5 @@
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef LIBGRAPHE_H
+#define LIBGRAPHE_H
 
 struct TypVoisins{
     int voisin;
