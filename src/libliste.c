@@ -5,7 +5,7 @@
 
 //creation
 struct list create(){
-    struct list self;// = malloc(sizeof(struct list));
+    struct list self;
     self.first = NULL;
     return self;
 }
@@ -13,10 +13,8 @@ struct list create(){
 //destruction
 void destroy(struct list *self){
     while(!is_empty(self)){
-        delAfter(self->first);
+        delFirst(self);
     }
-    //free(self);
-    //TODO how do I delete self->first, therefor how can self be empty ? infinite loop ahead
 }
 
 //ajout
@@ -26,13 +24,24 @@ void add(struct list *self, int value){ //insertion en début de la liste chain�
     self->first = other;
 }
 
-//suppression
+//suppression après l'élément courant
 void delAfter(struct list_node *node){
     struct list_node *tmp = malloc(sizeof(struct list_node));
     tmp->next = node->next->next;
     node->next->next = NULL;
     free(node->next);
     node->next = tmp;
+    tmp->next = NULL;
+    free(tmp);
+}
+
+//suppression du premier node
+void delFirst(struct list *self){
+    struct list_node *tmp = malloc(sizeof(struct list_node));
+    tmp->next = self->first->next;
+    self->first = NULL;
+    free(self->first);
+    self->first = tmp->next;
     tmp->next = NULL;
     free(tmp);
 }

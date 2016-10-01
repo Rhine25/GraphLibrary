@@ -19,8 +19,11 @@ void destroy(struct list*);
 //ajout
 void add(struct list*, int);
 
-//suppression
+//suppression après l'élément courant
 void delAfter(struct list_node*);
+
+//suppression du premier node
+void delFirst(struct list*);
 
 //parcours
 void visit(const struct list*);
