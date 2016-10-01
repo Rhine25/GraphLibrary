@@ -1,46 +1,49 @@
-#ifndef LIBGRAPH_H
-#define LIBGRAPH_H
+#ifndef LIBGRAPHE_H
+#define LIBGRAPHE_H
 
 struct TypVoisins{
     int voisin;
     int poids;
-    TypVoisin* voisinSuivant;
-    TypVoisin* voisinPrecedent;
-}
+    struct TypVoisins* voisinSuivant;
+    struct TypVoisins* voisinPrecedent;
+};
 
-struct TypGraph{
+struct TypGraphe{
     int estOriente;
     int nbMaxSommets;
-    TypVoisins* listesAdjacences;
-}
+    struct TypVoisins* listesAdjacences;
+};
 
 //création du graphe avec un nombre de sommet demandé
-void create();
+struct TypGraphe createGraphe();
+
+void destroyGraphe();
 
 //lecture d'un graphe dans un fichier texte
-void read();
+void read(const char* fileName);
 
 //inserer un nouveau sommet
-void addSommet(int s);
+void addVertex(struct TypGraphe g, int v);
 
 //inserer une arete entre deux somets d'un graf
-void addArete(int src, int dest);
+void addEdge(struct TypGraphe g, int src, int dest);
 
 //supprimer un sommet
-void delSommet(int s);
+void delVertex(struct TypGraphe g, int v);
 
 //supprimer une arete entre deux somets d'un graf
-void delArete(int src, int dest);
+void delEdge(struct TypGraphe g, int src, int dest);
 
-//afficher le graf dan le meme format que celui du fichier textee d'entrée
-void print();
+//parcours en profondeur
+void dfs(const struct TypGraphe *self);
+
+//parcours en largeur
+void bfs(const struct TypGraphe *self);
+
+//afficher le graphe dans le meme format que celui du fichier textee d'entrée
+void print(const struct TypGraphe g, const char* fileName);
 
 //enregistrer le graf dans un fichier texte
-void save();
-
-//quitter le programme et liberer toute la memoire
-void exitProg();
-
-
+void save(const struct TypGraphe g, const char* fileName);
 
 #endif

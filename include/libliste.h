@@ -14,16 +14,16 @@ struct list {
 struct list create();
 
 //destruction
-void destroy(struct list);
+void destroy(struct list*);
 
 //ajout
-void add(struct list, int);
+void add(struct list*, int);
 
 //suppression
-void del(struct list_node);
+void delAfter(struct list_node*);
 
 //parcours
-void visit(const struct list);
+void visit(const struct list*);
 /*
 //parcours en profondeur
 void dfs(const struct list); //depth first search
@@ -32,12 +32,12 @@ void dfs(const struct list); //depth first search
 void bfs(const struct list); //breadth first search
 */
 //vide
-int is_empty(const struct list);
+int is_empty(const struct list*);
 
 //taille
-size_t size(const struct list);
+size_t size(const struct list*);
 
 //recherche
-struct list_node search(const struct list, int);
+struct list_node search(const struct list*, int);
 
 #endif

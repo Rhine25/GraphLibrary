@@ -5,17 +5,18 @@
 
 //creation
 struct list create(){
-    struct list *self = malloc(sizeof(struct list));
-    self->first = NULL;
+    struct list self;// = malloc(sizeof(struct list));
+    self.first = NULL;
     return self;
 }
 
 //destruction
 void destroy(struct list *self){
     while(!is_empty(self)){
-        del(self->first);
+        delAfter(self->first);
     }
-    free(self);
+    //free(self);
+    //TODO how do I delete self->first, therefor how can self be empty ? infinite loop ahead
 }
 
 //ajout
@@ -26,10 +27,14 @@ void add(struct list *self, int value){ //insertion en dÃ©but de la liste chainÃ
 }
 
 //suppression
-void del(struct list_node *node){
-    node->previous->next = node->next;
-    node->next = NULL;
-    free(node);
+void delAfter(struct list_node *node){
+    struct list_node *tmp = malloc(sizeof(struct list_node));
+    tmp->next = node->next->next;
+    node->next->next = NULL;
+    free(node->next);
+    node->next = tmp;
+    tmp->next = NULL;
+    free(tmp);
 }
 
 //parcours
@@ -38,7 +43,6 @@ void visit(const struct list *self){
     visit->next = self->first;
     while(visit->next != NULL){
         visit->next = visit->next->next;
-        size++;
     }
     visit->next = NULL;
     free(visit);
@@ -54,6 +58,7 @@ void bfs(const struct list *self){ //breadth first search
     //TODO
 }
 */
+
 //vide
 int is_empty(const struct list *self){
     if (self->first == NULL){
@@ -78,10 +83,10 @@ size_t size(const struct list *self){
 
 //recherche
 struct list_node search(const struct list *self, int value){
-    struct list_node *visit = malloc(sizeof(struct list_node));
+    struct list_node visit; // = malloc(sizeof(struct list_node));
     int found = 0;
-    while(visit->next != NULL && visit->next->data != value){
-        visit->next = visit->next->next;
+    while(visit.next != NULL && visit.next->data != value){
+        visit.next = visit.next->next;
     }
     return visit;
 }
