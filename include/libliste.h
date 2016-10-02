@@ -11,7 +11,7 @@ struct list {
 };
 
 //creation
-struct list create();
+struct list createList();
 
 //destruction
 void destroy(struct list*);

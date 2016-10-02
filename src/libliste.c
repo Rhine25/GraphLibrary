@@ -4,7 +4,7 @@
 #include "../include/libliste.h"
 
 //creation
-struct list create(){
+struct list createList(){
     struct list self;
     self.first = NULL;
     return self;
@@ -17,11 +17,14 @@ void destroy(struct list *self){
     }
 }
 
-//ajout
+//ajout au début de la liste
 void add(struct list *self, int value){ //insertion en début de la liste chainée
     struct list_node *other = malloc(sizeof(struct list_node));
+    other->data = value;
     other->next = self->first;
     self->first = other;
+    //visit(self);
+    //printf("size : %lu\n", size(self));
 }
 
 //suppression après l'élément courant
@@ -39,21 +42,24 @@ void delAfter(struct list_node *node){
 void delFirst(struct list *self){
     struct list_node *tmp = malloc(sizeof(struct list_node));
     tmp->next = self->first->next;
-    self->first = NULL;
     free(self->first);
+    self->first = NULL;
     self->first = tmp->next;
     tmp->next = NULL;
     free(tmp);
 }
 
-//parcours
+//parcours / affichage de la liste
 void visit(const struct list *self){
-    struct list_node *visit = malloc(sizeof(struct list_node));
-    visit->next = self->first;
-    while(visit->next != NULL){
-        visit->next = visit->next->next;
+    struct list *visit = malloc(sizeof(struct list));
+    visit->first = self->first;
+    printf("Affichage de la liste : \n-> ");
+    while(visit->first != NULL){
+        printf("%i -> ",visit->first->data);
+        visit->first = visit->first->next;
     }
-    visit->next = NULL;
+    printf("NULL\n");
+    visit->first = NULL;
     free(visit);
 }
 /*
@@ -78,14 +84,17 @@ int is_empty(const struct list *self){
 
 //taille
 size_t size(const struct list *self){
+    if(is_empty(self)){
+        return 0;
+    }
     struct list_node *visit = malloc(sizeof(struct list_node));
-    visit->next = self->first;
-    size_t size = 0;
+    visit = self->first;
+    size_t size = 1;
     while(visit->next != NULL){
-        visit->next = visit->next->next;
+        visit = visit->next;
+        printf("size visit data = %i", visit->data);
         size++;
     }
-    visit->next = NULL;
     free(visit);
     return size;
 }
