@@ -4,7 +4,7 @@ CFLAGS=-g -c -D_DEBUG
 CCFLAGS=-g -c -D_DEBUG
 CLINK=-lsfml-graphics -lsfml-window -lsfml-system -lpthread
 
-EXEC=Pong
+EXEC=graf
 
 CFILES:=$(wildcard src/*.c)
 CPPFILES:=$(wildcard src/*.cpp)
