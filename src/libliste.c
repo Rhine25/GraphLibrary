@@ -37,6 +37,7 @@ void delAfter(struct list_node *node){
     node->next = tmp;
     tmp->next = NULL;
     free(tmp);
+    //TODO need to fix this
 }
 
 //suppression du premier node
@@ -92,9 +93,12 @@ size_t size(const struct list *self){
 //recherche
 struct list_node search(const struct list *self, int value){
     struct list_node visit; // = malloc(sizeof(struct list_node));
-    int found = 0;
+    visit.next = self->first;
     while(visit.next != NULL && visit.next->state != value){
         visit.next = visit.next->next;
     }
+    //renvoie le node précédent celui recherché
     return visit;
+
+    //TODO check if works
 }

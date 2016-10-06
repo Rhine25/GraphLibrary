@@ -1,38 +1,33 @@
 #ifndef LIBGRAPHE_H
 #define LIBGRAPHE_H
 
-struct TypVoisins{
-    int voisin;
-    int poids;
-    struct TypVoisins* voisinSuivant;
-    struct TypVoisins* voisinPrecedent;
-};
-
 struct TypGraphe{
     int estOriente;
     int nbMaxSommets;
-    struct TypVoisins* listesAdjacences;
+    struct list* listesAdjacences;
 };
 
 //création du graphe avec un nombre de sommet demandé
-struct TypGraphe createGraphe();
+struct TypGraphe createGraphe(int, int);
 
-void destroyGraphe();
+void destroyGraphe(struct TypGraphe*);
+
+void createVertex(struct TypGraphe*, int);
 
 //lecture d'un graphe dans un fichier texte
 void read(const char* fileName);
 
 //inserer un nouveau sommet
-void addVertex(struct TypGraphe g, int v);
+void addVertex(struct TypGraphe*);
 
 //inserer une arete entre deux somets d'un graf
-void addEdge(struct TypGraphe g, int src, int dest);
+void addEdge(struct TypGraphe*, int, int, int);
 
 //supprimer un sommet
-void delVertex(struct TypGraphe g, int v);
+void delVertex(struct TypGraphe*, int v);
 
 //supprimer une arete entre deux somets d'un graf
-void delEdge(struct TypGraphe g, int src, int dest);
+void delEdge(struct TypGraphe*, int src, int dest);
 
 //parcours en profondeur
 void dfs(const struct TypGraphe *self);
