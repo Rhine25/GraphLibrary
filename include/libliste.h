@@ -1,8 +1,15 @@
 #ifndef LIBLISTE_H
 #define LIBLISTE_H
 
+/*
+ * Trucs à replace
+ * list_node = TypVoisins
+ * state = voisin
+ */
+
 struct list_node {
-	int data;
+	int state; //name of the current elem
+	int poids;
 	struct list_node *next;
 };
 
@@ -17,7 +24,7 @@ struct list createList();
 void destroy(struct list*);
 
 //ajout
-void add(struct list*, int);
+void add(struct list*, int, int);
 
 //suppression après l'élément courant
 void delAfter(struct list_node*);
@@ -27,13 +34,7 @@ void delFirst(struct list*);
 
 //parcours
 void visit(const struct list*);
-/*
-//parcours en profondeur
-void dfs(const struct list); //depth first search
 
-//parcours en largeur
-void bfs(const struct list); //breadth first search
-*/
 //vide
 int is_empty(const struct list*);
 

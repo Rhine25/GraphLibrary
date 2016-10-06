@@ -7,9 +7,9 @@
 int main()
 {
   struct list ma_liste = createList();
-  add(&ma_liste, 3);
-  add(&ma_liste, 2);
-  add(&ma_liste, 42);
+  add(&ma_liste, 3, 1);
+  add(&ma_liste, 2, 4);
+  add(&ma_liste, 42, 2);
   visit(&ma_liste);
   //size(&ma_liste); SHIT HAPPENS
   search(&ma_liste,2);
