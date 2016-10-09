@@ -3,18 +3,17 @@
 
 #include "../include/libliste.h"
 #include "../include/libgraphe.h"
+//TODO del these two libs that shoult not be called directly
+
+#include "../include/main.h"
 
 int main()
 {
-  struct list ma_liste = createList();
-  add(&ma_liste, 3, 1);
-  add(&ma_liste, 2, 4);
-  add(&ma_liste, 42, 2);
-  visit(&ma_liste);
-  //size(&ma_liste); SHIT HAPPENS
-  search(&ma_liste,2);
-  //delAfter(ma_liste.first->next); SHIT HAPPENS, and one extra free
-  destroy(&ma_liste);
-
+  struct graph mon_graphe = createGraphe(1,9);
+  addVertex(&mon_graphe);
+  addVertex(&mon_graphe);
+  addEdge(&mon_graphe, 0, 1, 4);
+  //save(&mon_graphe, "graphe"); //TODO shit happens again
+  destroyGraphe(&mon_graphe);
   return 0;
 }

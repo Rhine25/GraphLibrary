@@ -2,7 +2,7 @@ CC=gcc
 CCC=g++
 CFLAGS=-g -c -D_DEBUG
 CCFLAGS=-g -c -D_DEBUG
-CLINK=-lsfml-graphics -lsfml-window -lsfml-system -lpthread
+CLINK=
 
 EXEC=graf
 

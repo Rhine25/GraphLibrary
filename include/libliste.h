@@ -44,4 +44,8 @@ size_t size(const struct list*);
 //recherche
 struct list_node search(const struct list*, int);
 
+char* listToString(const struct list*);
+
+char* nodeToString(const struct list_node*);
+
 #endif
