@@ -53,7 +53,7 @@ void delNodeAfter(struct list_node *node){
  * param entrée : pointeur sur une liste
  * supprime le premier node et raccroche la fin de la liste
  * */
-void delFirst(struct list *self){
+void delFirstNode(struct list *self){
     struct list_node *tmp = malloc(sizeof(struct list_node));
     tmp->next = self->first->next;
     free(self->first);
@@ -67,7 +67,7 @@ void delFirst(struct list *self){
  * param entrée : pointeur sur une liste
  * parcoure la liste et affiche ses nodes
  * */
-void visit(const struct list *self){
+void visitList(const struct list *self){
     struct list *visit = malloc(sizeof(struct list));
     visit->first = self->first;
     printf("Affichage de la liste : \n-> ");
@@ -83,7 +83,7 @@ void visit(const struct list *self){
  * param entrée : pointeur sur une liste
  * retourne : 1 si la liste est vide, 0 sinon
  * */
-int is_empty(const struct list *self){
+int isEmptyList(const struct list *self){
     if (self->first == NULL){
         return 1;
     }
@@ -94,8 +94,8 @@ int is_empty(const struct list *self){
  * param entrée : pointeur sur une liste
  * retourne : longueur de la liste
  * */
-size_t size(const struct list *self){
-    if(is_empty(self)){ //WARNING means state doesn't belong to graph. A graph's state that has no transitions has list size of 1
+size_t listSize(const struct list *self){
+    if(isEmptyList(self)){ //WARNING means state doesn't belong to graph. A graph's state that has no transitions has list size of 1
         return 0;
     }
     struct list_node *visit;
@@ -113,7 +113,7 @@ size_t size(const struct list *self){
  * param entrée : pointeur sur une liste, entier successeur recherché
  * retourne : node précédent le node recherché
  * */
-struct list_node search(const struct list *self, int value){
+struct list_node searchNode(const struct list *self, int value){
     struct list_node visit;
     visit.next = self->first;
     while(visit.next != NULL && visit.next->state != value){

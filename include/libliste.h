@@ -21,28 +21,28 @@ struct list {
 struct list createList();
 
 //destruction
-void destroy(struct list*);
+void destroyList(struct list*);
 
 //ajout
-void add(struct list*, int, int);
+void addNode(struct list*, int, int);
 
 //suppression après l'élément courant
-void delAfter(struct list_node*);
+void delNodeAfter(struct list_node*);
 
 //suppression du premier node
-void delFirst(struct list*);
+void delFirstNode(struct list*);
 
 //parcours
-void visit(const struct list*);
+void visitList(const struct list*);
 
 //vide
-int is_empty(const struct list*);
+int isEmptyList(const struct list*);
 
 //taille
-size_t size(const struct list*);
+size_t listSize(const struct list*);
 
 //recherche
-struct list_node search(const struct list*, int);
+struct list_node searchNode(const struct list*, int);
 
 char* listToString(const struct list*);
 
