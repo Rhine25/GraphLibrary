@@ -24,7 +24,7 @@ struct list createList();
 void destroyList(struct list*);
 
 //ajout
-void addNode(struct list*, int, int);
+void addNode(struct list*, int voisin, int poids);
 
 //suppression après l'élément courant
 void delNodeAfter(struct list_node*);

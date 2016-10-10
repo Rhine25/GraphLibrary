@@ -15,7 +15,7 @@ void destroyGraphe(struct graph*);
 void createVertex(struct graph*, int);
 
 //lecture d'un graphe dans un fichier texte
-void read(const char* fileName);
+void readGraphe(const char* fileName);
 
 //inserer un nouveau sommet
 void addVertex(struct graph*);
@@ -36,9 +36,9 @@ void dfs(const struct graph *self);
 void bfs(const struct graph *self);
 
 //afficher le graphe dans le meme format que celui du fichier textee d'entrée
-void print(const struct graph*, const char* fileName);
+void printGraphe(const struct graph*, const char* fileName);
 
 //enregistrer le graf dans un fichier texte
-void save(const struct graph*, const char* fileName);
+void saveGraphe(const struct graph*, const char* fileName);
 
 #endif

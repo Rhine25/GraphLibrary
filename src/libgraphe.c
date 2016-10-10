@@ -4,7 +4,10 @@
 #include "../include/libgraphe.h"
 #include "../include/libliste.h"
 
-//création du graphe avec un nombre de sommet demandé
+/* creation d'un graphe
+ * param entrée :
+ * retourne :
+ * */
 struct graph createGraphe(int oriente, int maxSommets){
     struct graph self;
     self.listesAdjacences = calloc(maxSommets, sizeof(struct list));
@@ -18,25 +21,37 @@ struct graph createGraphe(int oriente, int maxSommets){
     return self;
 }
 
+/* creation d'un graphe
+ * param entrée :
+ * */
 void destroyGraphe(struct graph *self){
     int i = 0;
     for(i; i<self->nbMaxSommets; i++){ //on désalloue chaque liste
-        destroy(&self->listesAdjacences[i]);
+        destroyList(&self->listesAdjacences[i]);
     }
     free(self->listesAdjacences);
 }
 
+/* creation d'un graphe
+ * param entrée :
+ * */
 void createVertex(struct graph *self, int sommet){
-    add(&self->listesAdjacences[sommet],-1, 0);
-    //TODO check sommet < nbMaxSommets
+    //TODO check sommet is < nbMaxSommets
+    addNode(&self->listesAdjacences[sommet],-1, 0);
 }
 
 //lecture d'un graphe dans un fichier texte
-void read(const char* fileName){
+/* creation d'un graphe
+ * param entrée :
+ * */
+void readGraphe(const char* fileName){
     
 }
 
 //inserer un nouveau sommet
+/* creation d'un graphe
+ * param entrée :
+ * */
 void addVertex(struct graph *self){
     //TODO check il reste au moins un sommet à attribuer
     int i = 0;
@@ -47,14 +62,22 @@ void addVertex(struct graph *self){
 }
 
 //inserer une arete entre deux somets d'un graf
+/* creation d'un graphe
+ * param entrée :
+ * */
 void addEdge(struct graph* self, int src, int dest, int poids){
-    add(&self->listesAdjacences[src],dest,poids);
+    //TODO check src and dest are existing states
+    addNode(&self->listesAdjacences[src],dest,poids);
 }
 
 //supprimer un sommet
-void delVertex(struct graph *self, int v){
-    destroy(&self->listesAdjacences[v]);
-    int i = v;
+/* creation d'un graphe
+ * param entrée :
+ * */
+void delVertex(struct graph *self, int state){
+    //TODO check state exists
+    destroyList(&self->listesAdjacences[state]);
+    int i = state;
     for(i;i<self->nbMaxSommets-1; i++){ //on décale les sommets placés après celui qui vient d'être supprimé
         self->listesAdjacences[i] = self->listesAdjacences[i+1];
     }
@@ -63,18 +86,29 @@ void delVertex(struct graph *self, int v){
 }
 
 //supprimer une arete entre deux sommets d'un graphe
+/* creation d'un graphe
+ * param entrée :
+ * */
 void delEdge(struct graph *self, int src, int dest){
-    struct list_node node = search(&self->listesAdjacences[src], dest);
-    delAfter(&node);
+    //TODO check src and dest are existing states
+    struct list_node node = searchNode(&self->listesAdjacences[src], dest);
+    //TODO check node != NULL
+    delNodeAfter(&node);
 }
 
 //afficher le graphe dans le meme format que celui du fichier textee d'entrée
-void print(const struct graph *self, const char* fileName){
+/* creation d'un graphe
+ * param entrée :
+ * */
+void printGraphe(const struct graph *self, const char* fileName){
     
 }
 
 //enregistrer le graf dans un fichier texte
-void save(const struct graph *self, const char* fileName){
+/* creation d'un graphe
+ * param entrée :
+ * */
+void saveGraphe(const struct graph *self, const char* fileName){
     FILE* f = fopen(fileName, "w");
     if(f == NULL){
         fprintf(stderr,"Could not open file %s\n",fileName);

@@ -17,8 +17,8 @@ struct list createList(){
  * libère chaque node jusqu'à que la liste soit vide
  * */
 void destroyList(struct list *self){
-    while(!is_empty(self)){
-        delFirst(self);
+    while(!isEmptyList(self)){
+        delFirstNode(self);
     }
 }
 
@@ -27,6 +27,7 @@ void destroyList(struct list *self){
  * crée un nouveau node et le place au début de la liste
  * */
 void addNode(struct list *self, int voisin, int poids){ //insertion en début de la liste chainée
+    //TODO check state voisin exists (=> in the calling function)
     struct list_node *other = malloc(sizeof(struct list_node));
     other->state = voisin;
     other->poids = poids;
@@ -39,14 +40,14 @@ void addNode(struct list *self, int voisin, int poids){ //insertion en début de
  * supprime le node suivant et raccroche l'élément courant à la fin de la liste
  */
 void delNodeAfter(struct list_node *node){
-    struct list_node *tmp = malloc(sizeof(struct list_node));
-    tmp->next = node->next->next;
-    node->next->next = NULL;
+    //TODO check there is a node after
+    struct list *tmp = malloc(sizeof(struct list));
+    tmp->first = node->next->next;
     free(node->next);
-    node->next = tmp;
-    tmp->next = NULL;
+    node->next = NULL;
+    node->next = tmp->first;
+    tmp->first = NULL;
     free(tmp);
-    //TODO need to fix this
 }
 
 /* suppression du premier node de la liste
@@ -54,6 +55,7 @@ void delNodeAfter(struct list_node *node){
  * supprime le premier node et raccroche la fin de la liste
  * */
 void delFirstNode(struct list *self){
+    //TODO check list isn't empty
     struct list_node *tmp = malloc(sizeof(struct list_node));
     tmp->next = self->first->next;
     free(self->first);
@@ -98,14 +100,14 @@ size_t listSize(const struct list *self){
     if(isEmptyList(self)){ //WARNING means state doesn't belong to graph. A graph's state that has no transitions has list size of 1
         return 0;
     }
-    struct list_node *visit;
-    visit = self->first;
+    struct list *visit;
+    //TODO fix use of uninitialized value
+    visit->first = self->first;
     size_t size = 1;
-    while(visit->next != NULL){
-        visit = visit->next;
+    while(visit->first->next != NULL){
+        visit->first = visit->first->next;
         size++;
     }
-    free(visit);
     return size;
 }
 
@@ -114,6 +116,7 @@ size_t listSize(const struct list *self){
  * retourne : node précédent le node recherché
  * */
 struct list_node searchNode(const struct list *self, int value){
+    //TODO gérer quand le node recherché n'est pas trouvé (ou calling fct must check if returned node is null)
     struct list_node visit;
     visit.next = self->first;
     while(visit.next != NULL && visit.next->state != value){
