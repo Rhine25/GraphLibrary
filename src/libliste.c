@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/libliste.h"
 
@@ -40,14 +41,15 @@ void addNode(struct list *self, int voisin, int poids){ //insertion en début de
  * supprime le node suivant et raccroche l'élément courant à la fin de la liste
  */
 void delNodeAfter(struct list_node *node){
-    //TODO check there is a node after
-    struct list *tmp = malloc(sizeof(struct list));
-    tmp->first = node->next->next;
-    free(node->next);
-    node->next = NULL;
-    node->next = tmp->first;
-    tmp->first = NULL;
-    free(tmp);
+    if(node->next != NULL) {
+        struct list *tmp = malloc(sizeof(struct list));
+        tmp->first = node->next->next;
+        free(node->next);
+        node->next = NULL;
+        node->next = tmp->first;
+        tmp->first = NULL;
+        free(tmp);
+    }
 }
 
 /* suppression du premier node de la liste
@@ -63,22 +65,6 @@ void delFirstNode(struct list *self){
     self->first = tmp->next;
     tmp->next = NULL;
     free(tmp);
-}
-
-/* affichage de la liste
- * param entrée : pointeur sur une liste
- * parcoure la liste et affiche ses nodes
- * */
-void visitList(const struct list *self){
-    struct list *visit = malloc(sizeof(struct list));
-    visit->first = self->first;
-    printf("Affichage de la liste : \n-> ");
-    while(visit->first != NULL){
-        printf("%i -> ",visit->first->state);
-        visit->first = visit->first->next;
-    }
-    printf("NULL\n");
-    free(visit);
 }
 
 /* test du vide
@@ -100,12 +86,11 @@ size_t listSize(const struct list *self){
     if(isEmptyList(self)){ //WARNING means state doesn't belong to graph. A graph's state that has no transitions has list size of 1
         return 0;
     }
-    struct list *visit;
-    //TODO fix use of uninitialized value
-    visit->first = self->first;
+    struct list visit;
+    visit.first = self->first;
     size_t size = 1;
-    while(visit->first->next != NULL){
-        visit->first = visit->first->next;
+    while(visit.first->next != NULL){
+        visit.first = visit.first->next;
         size++;
     }
     return size;
@@ -131,15 +116,17 @@ struct list_node searchNode(const struct list *self, int value){
  * //TODO
  * */
 char* listToString(const struct list *self){
-
-    static char str[20] = {};
-    struct list_node *visit;
-    visit = self->first;
-    while(visit->next != NULL){
-        visit = visit->next;
-        sprintf(str,"%s, ", nodeToString(visit));
+    static char str[100] = "";
+    memset(str,0,sizeof(str));
+    struct list visit;
+    visit.first = self->first;
+    while(visit.first->next != NULL){
+        strcat(str, nodeToString(visit.first));
+        strcat(str, ", ");
+        visit.first = visit.first->next;
     }
-    sprintf(str,"\n");
+    strcat(str, nodeToString(visit.first));
+    strcat(str,"\n");
     return str;
 }
 
@@ -147,7 +134,8 @@ char* listToString(const struct list *self){
  * //TODO
  * */
 char* nodeToString(const struct list_node *self){
-    static char str[20] = {};
+    static char str[20] = "";
+    memset(str,0,sizeof(str));
     sprintf(str, "(%i/%i)", self->state, self->poids);
     return str;
 }

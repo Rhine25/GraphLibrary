@@ -1,6 +1,6 @@
 CC=gcc
 CCC=g++
-CFLAGS=-g -c -D_DEBUG
+CFLAGS=-g -Wall -c -D_DEBUG
 CCFLAGS=-g -c -D_DEBUG
 CLINK=
 
@@ -13,13 +13,13 @@ CPPOBJ:=$(addprefix obj/,$(notdir $(CPPFILES:.cpp=_cpp.o)))
 
 all: $(COBJ) $(CPPOBJ)
 	
-	$(CCC) $^ -o bin/$(EXEC) $(CLINK)
+	$(CC) $^ -o bin/$(EXEC) $(CLINK)
 	
 obj/%_c.o: src/%.c
 	$(CC) $(CFLAGS) $^ -o $@
 
 obj/%_cpp.o: src/%.cpp
-	$(CCC) $(CCFLAGS) $^ -o $@
+	$(CC) $(CCFLAGS) $^ -o $@
 
 clean:
 	rm obj/*.o;

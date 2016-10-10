@@ -32,9 +32,6 @@ void delNodeAfter(struct list_node*);
 //suppression du premier node
 void delFirstNode(struct list*);
 
-//parcours
-void visitList(const struct list*);
-
 //vide
 int isEmptyList(const struct list*);
 
