@@ -39,7 +39,7 @@ int isEmptyList(const struct list*);
 size_t listSize(const struct list*);
 
 //recherche
-struct list_node searchNode(const struct list*, int);
+struct list_node* searchNode(const struct list*, int);
 
 char* listToString(const struct list*);
 

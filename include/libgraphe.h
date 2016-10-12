@@ -36,9 +36,11 @@ void dfs(const struct graph *self);
 void bfs(const struct graph *self);
 
 //afficher le graphe dans le meme format que celui du fichier textee d'entrée
-void printGraphe(const struct graph*, const char* fileName);
+void printGraphe(const struct graph*, FILE* out);
 
 //enregistrer le graf dans un fichier texte
 void saveGraphe(const struct graph*, const char* fileName);
+
+int belongsToGraphe(const struct graph*, int state);
 
 #endif

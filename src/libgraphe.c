@@ -14,9 +14,8 @@ struct graph createGraphe(int oriente, int maxSommets){
     self.estOriente = oriente;
     self.nbMaxSommets = maxSommets;
     int i = 0;
-    for(i; i<maxSommets; i++){
+    for(i=0; i<maxSommets; i++){
         self.listesAdjacences[i] = createList();
-        //fprintf(stderr,"DEBUG createGraf : self.listesAdjacences[%i] = %p\n", i, &self.listesAdjacences[i]);
     }
     return self;
 }
@@ -26,18 +25,20 @@ struct graph createGraphe(int oriente, int maxSommets){
  * */
 void destroyGraphe(struct graph *self){
     int i = 0;
-    for(i; i<self->nbMaxSommets; i++){ //on désalloue chaque liste
+    for(i=0; i<self->nbMaxSommets; i++){ //on désalloue chaque liste
         destroyList(&self->listesAdjacences[i]);
     }
     free(self->listesAdjacences);
+    self->listesAdjacences = NULL;
 }
 
 /* creation d'un graphe
  * param entrée :
  * */
 void createVertex(struct graph *self, int sommet){
-    //TODO check sommet is < nbMaxSommets
-    addNode(&self->listesAdjacences[sommet],-1, 0);
+    if(sommet<self->nbMaxSommets && isEmptyList(&self->listesAdjacences[sommet])) {
+        addNode(&self->listesAdjacences[sommet], -1, 0);
+    }
 }
 
 //lecture d'un graphe dans un fichier texte
@@ -53,9 +54,9 @@ void readGraphe(const char* fileName){
  * param entrée :
  * */
 void addVertex(struct graph *self){
-    //TODO check il reste au moins un sommet à attribuer
+    //TODO check what happens when graf has max sommets attribués
     int i = 0;
-    while(i < self->nbMaxSommets && self->listesAdjacences[i].first != NULL){
+    while(belongsToGraphe(self, i)){
         i++;
     }
     createVertex(self,i);
@@ -66,8 +67,9 @@ void addVertex(struct graph *self){
  * param entrée :
  * */
 void addEdge(struct graph* self, int src, int dest, int poids){
-    //TODO check src and dest are existing states
-    addNode(&self->listesAdjacences[src],dest,poids);
+    if(belongsToGraphe(self, src) && belongsToGraphe(self, dest)) {
+        addNode(&self->listesAdjacences[src], dest, poids);
+    }
 }
 
 //supprimer un sommet
@@ -75,14 +77,15 @@ void addEdge(struct graph* self, int src, int dest, int poids){
  * param entrée :
  * */
 void delVertex(struct graph *self, int state){
-    //TODO check state exists
-    destroyList(&self->listesAdjacences[state]);
-    int i = state;
-    for(i;i<self->nbMaxSommets-1; i++){ //on décale les sommets placés après celui qui vient d'être supprimé
-        self->listesAdjacences[i] = self->listesAdjacences[i+1];
+    if(belongsToGraphe(self, state)) {
+        int i;
+        for(i = 0; i<self->nbMaxSommets; i++){
+            if(!isEmptyList(&self->listesAdjacences[i])){
+                delNodeAfter(searchNode(&self->listesAdjacences[i],state));
+            }
+        }
+        destroyList(&self->listesAdjacences[state]);
     }
-    //TODO check if every table case contained a list, what happens with the last one
-    self->nbMaxSommets--;
 }
 
 //supprimer une arete entre deux sommets d'un graphe
@@ -90,18 +93,34 @@ void delVertex(struct graph *self, int state){
  * param entrée :
  * */
 void delEdge(struct graph *self, int src, int dest){
-    //TODO check src and dest are existing states
-    struct list_node node = searchNode(&self->listesAdjacences[src], dest);
-    //TODO check node != NULL
-    delNodeAfter(&node);
+    if(belongsToGraphe(self, src) && belongsToGraphe(self, dest)) {
+        struct list_node *node = searchNode(&self->listesAdjacences[src], dest);
+        delNodeAfter(node);
+    }
 }
 
 //afficher le graphe dans le meme format que celui du fichier textee d'entrée
 /* creation d'un graphe
  * param entrée :
  * */
-void printGraphe(const struct graph *self, const char* fileName){
-    
+void printGraphe(const struct graph *self, FILE* out){
+    if(out == NULL){
+        out = stdout;
+    }
+    fprintf(out,"# nombre maximum de sommets\n");
+    fprintf(out,"# oriente\n");
+    if(self->estOriente == 0) {
+        fprintf(out,"n\n");
+    }
+    else{
+        fprintf(out,"o\n");
+    }
+    fprintf(out,"# sommets : voisins\n");
+    int i = 0;
+    while(belongsToGraphe(self, i)) {
+        fprintf(out,"%i : %s", i, listToString(&self->listesAdjacences[i]));
+        i++;
+    }
 }
 
 //enregistrer le graf dans un fichier texte
@@ -114,29 +133,13 @@ void saveGraphe(const struct graph *self, const char* fileName){
         fprintf(stderr,"Could not open file %s\n",fileName);
         return;
     }
-    fputs("# nombre maximum de sommets\n", f);
-    /*char* str;
-    sprintf(str, "%i", self->nbMaxSommets);
-    fputs(str, f);*/
-    fputs("# oriente\n", f);
-    if(self->estOriente == 0){
-        fputs("n\n", f);
-    }
-    else{
-        fputs("o\n", f);
-    }
-    fputs("# sommets : voisins\n", f);
-    int i = 0;
-    while(i<self->nbMaxSommets && self->listesAdjacences[i].first != NULL){
-        char* str;
-        //sprintf(str, "%i : %s", i, listToString(&self->listesAdjacences[i]));
-        sprintf(str, "%i : temporary", i);
-        //TODO debug this is causing listesAdjacence to lose their values
-        //printf("listToString %s", listToString(&self->listesAdjacences[i]));
-        //fputs(str, f);
-        //printf("test\n");
-        i++;
-    }
-
+    printGraphe(self,f);
     fclose(f);
+}
+
+int belongsToGraphe(const struct graph *self, int state){
+    if(state < self->nbMaxSommets && !isEmptyList(&self->listesAdjacences[state])){
+        return 1;
+    }
+    return 0;
 }

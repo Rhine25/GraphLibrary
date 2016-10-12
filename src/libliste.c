@@ -28,7 +28,6 @@ void destroyList(struct list *self){
  * crée un nouveau node et le place au début de la liste
  * */
 void addNode(struct list *self, int voisin, int poids){ //insertion en début de la liste chainée
-    //TODO check state voisin exists (=> in the calling function)
     struct list_node *other = malloc(sizeof(struct list_node));
     other->state = voisin;
     other->poids = poids;
@@ -57,14 +56,15 @@ void delNodeAfter(struct list_node *node){
  * supprime le premier node et raccroche la fin de la liste
  * */
 void delFirstNode(struct list *self){
-    //TODO check list isn't empty
-    struct list_node *tmp = malloc(sizeof(struct list_node));
-    tmp->next = self->first->next;
-    free(self->first);
-    self->first = NULL;
-    self->first = tmp->next;
-    tmp->next = NULL;
-    free(tmp);
+    if(!isEmptyList(self)) {
+        struct list_node *tmp = malloc(sizeof(struct list_node));
+        tmp->next = self->first->next;
+        free(self->first);
+        self->first = NULL;
+        self->first = tmp->next;
+        tmp->next = NULL;
+        free(tmp);
+    }
 }
 
 /* test du vide
@@ -100,24 +100,24 @@ size_t listSize(const struct list *self){
  * param entrée : pointeur sur une liste, entier successeur recherché
  * retourne : node précédent le node recherché
  * */
-struct list_node searchNode(const struct list *self, int value){
-    //TODO gérer quand le node recherché n'est pas trouvé (ou calling fct must check if returned node is null)
-    struct list_node visit;
-    visit.next = self->first;
-    while(visit.next != NULL && visit.next->state != value){
-        visit.next = visit.next->next;
+struct list_node* searchNode(const struct list *self, int value){
+    //TODO what happens when the node searched for is the first
+    struct list_node* visit;
+    visit = self->first;
+    while(visit->next != NULL && visit->next->state != value){
+        visit = visit->next;
     }
     //renvoie le node précédent celui recherché, pour pouvoir supprimer celui qui est recherché avec delAfterNode
     return visit;
-
-    //TODO check if works
 }
-/* affichage / string liste
- * //TODO
+/* écriture de la liste
+ * param entrée : pointeur sur une liste
+ * retourne : string contenant la liste sous la forme demandée
+ * parcoure la liste et écrit les nodes séparés par des virgules
  * */
 char* listToString(const struct list *self){
-    static char str[100] = "";
-    memset(str,0,sizeof(str));
+    static char str[100] = ""; //static pour pouvoir lire la valeur de la string dans la fonction appelante
+    memset(str,0,sizeof(str)); //initialise la string à vide
     struct list visit;
     visit.first = self->first;
     while(visit.first->next != NULL){
@@ -130,8 +130,9 @@ char* listToString(const struct list *self){
     return str;
 }
 
-/* affichage / string node
- * //TODO
+/* écriture du node
+ * param entrée : pointeur sur un node
+ * retourne : string contenant le node sous la forme demandée (dest/poids)
  * */
 char* nodeToString(const struct list_node *self){
     static char str[20] = "";
