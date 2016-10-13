@@ -46,7 +46,7 @@ void createVertex(struct graph *self, int sommet){
  * param entrée :
  * */
 void readGraphe(const char* fileName){
-    
+    //TODO
 }
 
 //inserer un nouveau sommet
@@ -69,6 +69,9 @@ void addVertex(struct graph *self){
 void addEdge(struct graph* self, int src, int dest, int poids){
     if(belongsToGraphe(self, src) && belongsToGraphe(self, dest)) {
         addNode(&self->listesAdjacences[src], dest, poids);
+    }
+    if(self->estOriente){
+        addEdge(self, dest, src, poids);
     }
 }
 
@@ -96,6 +99,9 @@ void delEdge(struct graph *self, int src, int dest){
     if(belongsToGraphe(self, src) && belongsToGraphe(self, dest)) {
         struct list_node *node = searchNode(&self->listesAdjacences[src], dest);
         delNodeAfter(node);
+    }
+    if(self->estOriente){
+        delEdge(self, dest, src);
     }
 }
 
@@ -140,6 +146,16 @@ void saveGraphe(const struct graph *self, const char* fileName){
 int belongsToGraphe(const struct graph *self, int state){
     if(state < self->nbMaxSommets && !isEmptyList(&self->listesAdjacences[state])){
         return 1;
+    }
+    return 0;
+}
+
+int isEmptyGraphe(const struct graph *self){
+    int i;
+    for(i=0;i<self->nbMaxSommets;i++){
+        if(belongsToGraphe(self,i)){
+            return 1;
+        }
     }
     return 0;
 }

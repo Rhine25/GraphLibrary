@@ -43,4 +43,6 @@ void saveGraphe(const struct graph*, const char* fileName);
 
 int belongsToGraphe(const struct graph*, int state);
 
+int isEmptyGraphe(const struct graph*);
+
 #endif

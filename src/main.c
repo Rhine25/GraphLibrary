@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../include/libliste.h"
 #include "../include/libgraphe.h"
 //TODO del these two libs that shoult not be called directly
 
 #include "../include/main.h"
+#include "../include/menu.h"
 
 int main()
 {
@@ -28,7 +30,7 @@ int main()
   destroyList(&ma_liste);*/
 
   //----------------------Tests graphes--------------------
-  struct graph mon_graphe = createGraphe(1,9);
+  /*struct graph mon_graphe = createGraphe(1,9);
   addVertex(&mon_graphe);
   addVertex(&mon_graphe);
   addVertex(&mon_graphe);
@@ -45,6 +47,35 @@ int main()
   delEdge(&mon_graphe, 3, 2);
   delEdge(&mon_graphe, 2, 2); //del edge that doesn't exist
   delEdge(&mon_graphe, 7, 2); //del edge that doesn't exist on vertex non existant
-  destroyGraphe(&mon_graphe);
+  destroyGraphe(&mon_graphe);*/
+
+  menu();
+
   return 0;
+}
+
+void emptyBuffer() {
+  int c = 0;
+  while (c != '\n' && c != EOF) {
+    c = getchar();
+  }
+}
+
+int getInput(char *str, int length) {
+  char *positionEntree = NULL;
+
+  if (fgets(str, length, stdin) != NULL) {
+    positionEntree = strchr(str, '\n');
+    if (positionEntree != NULL) {
+      *positionEntree = '\0';
+    }
+    else {
+      emptyBuffer();
+    }
+    return 1;
+  }
+  else {
+    emptyBuffer();
+    return 0;
+  }
 }
