@@ -8,7 +8,7 @@ struct graph{
 };
 
 //création du graphe avec un nombre de sommet demandé
-struct graph createGraphe(int, int);
+struct graph createGraphe(int orientation, int maxSommets);
 
 void destroyGraphe(struct graph*);
 
@@ -41,7 +41,9 @@ void printGraphe(const struct graph*, FILE* out);
 //enregistrer le graf dans un fichier texte
 void saveGraphe(const struct graph*, const char* fileName);
 
-int belongsToGraphe(const struct graph*, int state);
+int belongsToGrapheState(const struct graph*, int state);
+
+int belongsToGrapheEdge(const struct graph*, int src, int dest);
 
 int isEmptyGraphe(const struct graph*);
 

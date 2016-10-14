@@ -4,21 +4,19 @@
 static const int NBMAXSOMMETS = 999;
 static const int NBMAXDIGITS = 3;
 
-struct graph* graphe;
-
-void createMenu();
-void creation();
-void lecture();
-void insertionSommet();
-void insertionArete();
-void suppressionSommet();
-void suppressionArete();
-void affichage ();
-void sauvegarde();
-void quitter();
+struct graph creation();
+void lecture(struct graph*);
+void insertionSommet(struct graph*);
+void insertionArete(struct graph*);
+void suppressionSommet(struct graph*);
+void suppressionArete(struct graph*);
+void affichage (struct graph*);
+void sauvegarde(struct graph*);
+void quitter(struct graph*);
 void menu();
-void affichageMenu();
-void affichageMenuSeparateur();
+void affichageMenuInit();
+void affichageMenuAction(struct graph* graphe);
+void affichageMenuSeparateur(struct graph* graphe);
 void askForStrInput(char* str, char* message);
 int askForIntInput(int maxLength, char* message);
 

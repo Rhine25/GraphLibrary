@@ -5,14 +5,7 @@
 #include "../include/main.h"
 #include "../include/menu.h"
 
-void createMenu(){
-    graphe = NULL;
-}
-
-void creation(){
-    if(graphe != NULL && !isEmptyGraphe(graphe)){
-        printf("Un automate existe déjà.");
-    }
+struct graph creation(){
     int length = 3;
     char nbMaxSommets[length];
     printf("Création d'un graphe :\n  Nombre de sommets maximum : ");
@@ -24,27 +17,27 @@ void creation(){
     getInput(orientation, length+1);
     if(strcmp(orientation,"n") == 0){
         printf("Le graphe sera non orienté\n");
-        struct graph g = createGraphe(atoi(nbMaxSommets), 0);
-        graphe = &g;
+        return createGraphe(0, atoi(nbMaxSommets));
+        //graphe = &g;
     }
     else{
         printf("Le graphe sera orienté\n");
-        struct graph g = createGraphe(atoi(nbMaxSommets), 1);
-        graphe = &g;
+        return createGraphe(1, atoi(nbMaxSommets));
+        //graphe = &g;
     }
 }
 
-void lecture(){
+void lecture(struct graph* graphe){
     //TODO
     printf("Non implemented yet, sorry\n");
 }
 
-void insertionSommet(){
+void insertionSommet(struct graph* graphe){
     addVertex(graphe);
     printf("Nouveau sommet créé\n");
 }
 
-void insertionArete(){
+void insertionArete(struct graph* graphe){
     int src = askForIntInput(NBMAXDIGITS,"De : ");
     int dest = askForIntInput(NBMAXDIGITS,"Vers : ");
     int poids = askForIntInput(NBMAXDIGITS,"De poids : ");
@@ -52,24 +45,24 @@ void insertionArete(){
     printf("Nouvelle arête créée\n");
 }
 
-void suppressionSommet(){
+void suppressionSommet(struct graph* graphe){
     int state = askForIntInput(NBMAXDIGITS, "Numéro de l'état : ");
     delVertex(graphe, state);
     printf("Sommet supprimé\n");
 }
 
-void suppressionArete(){
+void suppressionArete(struct graph* graphe){
     int src = askForIntInput(NBMAXDIGITS,"De : ");
     int dest = askForIntInput(NBMAXDIGITS,"Vers : ");
     delEdge(graphe, src, dest);
     printf("Arête supprimée\n");
 }
 
-void affichage(){
+void affichage(struct graph* graphe){
     printGraphe(graphe,stdout);
 }
 
-void sauvegarde(){
+void sauvegarde(struct graph* graphe){
     char filename[50];
     askForStrInput(filename,"Où souhaitez-vous sauvegarder le graphe ?");
     /*FILE* f = fopen(filename, "w");
@@ -81,7 +74,7 @@ void sauvegarde(){
     printf("Graphe sauvegardé\n");
 }
 
-void quitter(){
+void quitter(struct graph* graphe){
     if(graphe != NULL) {
         destroyGraphe(graphe);
     }
@@ -89,64 +82,76 @@ void quitter(){
 }
 
 void menu(){
-    createMenu();
-    affichageMenu();
+    affichageMenuInit();
 }
 
-void affichageMenu() {
+void affichageMenuInit() {
     printf("0 : Créer un graphe\n");
     printf("1 : Importer un graphe\n");
-    printf("2 : Ajouter un sommet au graphe\n");
-    printf("3 : Ajouter une transition au graphe\n");
-    printf("4 : Supprimer un sommet au graphe\n");
-    printf("5 : Supprimer une transition au graphe\n");
-    printf("6 : Afficher le graphe\n");
-    printf("7 : Sauvegarder le graphe\n");
-    printf("8 : Quitter\n");
+    printf("2 : Quitter\n");
+
+    struct graph graphe;
 
     int item = askForIntInput(1,"Que souhaitez-vous faire ?");
     switch(item){
         case 0 :
-            creation();
-            affichageMenuSeparateur();
+            graphe = creation();
+            affichageMenuSeparateur(&graphe);
             break;
         case 1 :
-            lecture();
-            affichageMenuSeparateur();
+            lecture(&graphe);
+            affichageMenuSeparateur(&graphe);
             break;
         case 2 :
-            insertionSommet();
-            affichageMenuSeparateur();
-            break;
-        case 3 :
-            insertionArete();
-            affichageMenuSeparateur();
-            break;
-        case 4 :
-            suppressionSommet();
-            affichageMenuSeparateur();
-            break;
-        case 5 :
-            suppressionArete();
-            affichageMenuSeparateur();
-            break;
-        case 6 :
-            affichage();
-            affichageMenuSeparateur();
-            break;
-        case 7 :
-            sauvegarde();
-            affichageMenuSeparateur();
-            break;
-        case 8 :
-            quitter();
+            quitter(&graphe);
             break;
     }
 }
 
-void affichageMenuSeparateur(){
+void affichageMenuAction(struct graph* graphe){
+    printf("0 : Afficher le graphe\n");
+    printf("1 : Ajouter un sommet au graphe\n");
+    printf("2 : Ajouter une transition au graphe\n");
+    printf("3 : Supprimer un sommet au graphe\n");
+    printf("4 : Supprimer une transition au graphe\n");
+    printf("5 : Sauvegarder le graphe et quitter\n");
+    printf("6 : Quitter\n");
+
+    int item = askForIntInput(1,"Que souhaitez-vous faire ?");
+    switch(item){
+        case 0 :
+            affichage(graphe);
+            affichageMenuSeparateur(graphe);
+            break;
+        case 1 :
+            insertionSommet(graphe);
+            affichageMenuSeparateur(graphe);
+            break;
+        case 2 :
+            insertionArete(graphe);
+            affichageMenuSeparateur(graphe);
+            break;
+        case 3 :
+            suppressionSommet(graphe);
+            affichageMenuSeparateur(graphe);
+            break;
+        case 4 :
+            suppressionArete(graphe);
+            affichageMenuSeparateur(graphe);
+            break;
+        case 5 :
+            sauvegarde(graphe);
+            quitter(graphe);
+            break;
+        case 6 :
+            quitter(graphe);
+            break;
+    }
+}
+
+void affichageMenuSeparateur(struct graph* graphe){
     printf("\n------------------------------------\n");
-    affichageMenu();
+    affichageMenuAction(graphe);
 }
 
 void askForStrInput(char* str, char* message){

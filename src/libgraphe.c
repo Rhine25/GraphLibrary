@@ -56,7 +56,7 @@ void readGraphe(const char* fileName){
 void addVertex(struct graph *self){
     //TODO check what happens when graf has max sommets attribués
     int i = 0;
-    while(belongsToGraphe(self, i)){
+    while(belongsToGrapheState(self, i)){
         i++;
     }
     createVertex(self,i);
@@ -67,10 +67,10 @@ void addVertex(struct graph *self){
  * param entrée :
  * */
 void addEdge(struct graph* self, int src, int dest, int poids){
-    if(belongsToGraphe(self, src) && belongsToGraphe(self, dest)) {
+    if(belongsToGrapheState(self, src) && belongsToGrapheState(self, dest)) {
         addNode(&self->listesAdjacences[src], dest, poids);
     }
-    if(self->estOriente){
+    if(self->estOriente && !belongsToGrapheEdge(self, dest, src)){
         addEdge(self, dest, src, poids);
     }
 }
@@ -80,7 +80,7 @@ void addEdge(struct graph* self, int src, int dest, int poids){
  * param entrée :
  * */
 void delVertex(struct graph *self, int state){
-    if(belongsToGraphe(self, state)) {
+    if(belongsToGrapheState(self, state)) {
         int i;
         for(i = 0; i<self->nbMaxSommets; i++){
             if(!isEmptyList(&self->listesAdjacences[i])){
@@ -96,7 +96,7 @@ void delVertex(struct graph *self, int state){
  * param entrée :
  * */
 void delEdge(struct graph *self, int src, int dest){
-    if(belongsToGraphe(self, src) && belongsToGraphe(self, dest)) {
+    if(belongsToGrapheState(self, src) && belongsToGrapheState(self, dest)) {
         struct list_node *node = searchNode(&self->listesAdjacences[src], dest);
         delNodeAfter(node);
     }
@@ -123,7 +123,7 @@ void printGraphe(const struct graph *self, FILE* out){
     }
     fprintf(out,"# sommets : voisins\n");
     int i = 0;
-    while(belongsToGraphe(self, i)) {
+    while(belongsToGrapheState(self, i)) {
         fprintf(out,"%i : %s", i, listToString(&self->listesAdjacences[i]));
         i++;
     }
@@ -143,9 +143,18 @@ void saveGraphe(const struct graph *self, const char* fileName){
     fclose(f);
 }
 
-int belongsToGraphe(const struct graph *self, int state){
+int belongsToGrapheState(const struct graph *self, int state){
     if(state < self->nbMaxSommets && !isEmptyList(&self->listesAdjacences[state])){
         return 1;
+    }
+    return 0;
+}
+
+int belongsToGrapheEdge(const struct graph *self, int src, int dest){
+    if(belongsToGrapheState(self, src) && belongsToGrapheState(self, dest)){
+        if(searchNode(&self->listesAdjacences[src], dest)->next->state == dest){ //on cherche si dest existe dans la liste des successeurs de src
+            return 1;
+        }
     }
     return 0;
 }
@@ -153,7 +162,7 @@ int belongsToGraphe(const struct graph *self, int state){
 int isEmptyGraphe(const struct graph *self){
     int i;
     for(i=0;i<self->nbMaxSommets;i++){
-        if(belongsToGraphe(self,i)){
+        if(belongsToGrapheState(self,i)){
             return 1;
         }
     }
