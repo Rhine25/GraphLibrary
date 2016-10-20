@@ -1,6 +1,9 @@
 #ifndef LIBGRAPHE_H
 #define LIBGRAPHE_H
 
+#define NBMAXSOMMETS 999
+#define NBMAXDIGITS 3
+
 struct graph{
     int estOriente;
     int nbMaxSommets;
@@ -15,13 +18,13 @@ void destroyGraphe(struct graph*);
 void createVertex(struct graph*, int);
 
 //lecture d'un graphe dans un fichier texte
-void readGraphe(const char* fileName);
+void readGraphe(const char* fileName, struct graph*);
 
 //inserer un nouveau sommet
-void addVertex(struct graph*);
+int addVertex(struct graph*);
 
 //inserer une arete entre deux somets d'un graf
-void addEdge(struct graph*, int, int, int);
+int addEdge(struct graph*, int, int, int);
 
 //supprimer un sommet
 void delVertex(struct graph*, int v);
@@ -39,7 +42,7 @@ void bfs(const struct graph *self);
 void printGraphe(const struct graph*, FILE* out);
 
 //enregistrer le graf dans un fichier texte
-void saveGraphe(const struct graph*, const char* fileName);
+int saveGraphe(const struct graph*, const char* fileName);
 
 int belongsToGrapheState(const struct graph*, int state);
 

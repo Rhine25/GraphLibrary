@@ -27,27 +27,41 @@ void destroyList(struct list *self){
  * param entrée : pointeur sur une liste, valeurs à affecter au node
  * crée un nouveau node et le place au début de la liste
  * */
-void addNode(struct list *self, int voisin, int poids){ //insertion en début de la liste chainée
+int addNode(struct list *self, int voisin, int poids){ //insertion en début de la liste chainée
     struct list_node *other = malloc(sizeof(struct list_node));
+    if(other == NULL){
+        return 1;
+    }
     other->state = voisin;
     other->poids = poids;
     other->next = self->first;
     self->first = other;
+    return 0;
 }
 
-/* suppression du node suivant l'élément courant
- * param entrée : pointeur sur un node
- * supprime le node suivant et raccroche l'élément courant à la fin de la liste
+/*suppression d'un node spécifique
+ * param entrée : pointeur sur une liste, entier valeur du node à supprimer
+ *
  */
-void delNodeAfter(struct list_node *node){
-    if(node->next != NULL) {
-        struct list *tmp = malloc(sizeof(struct list));
-        tmp->first = node->next->next;
-        free(node->next);
-        node->next = NULL;
-        node->next = tmp->first;
-        tmp->first = NULL;
-        free(tmp);
+void delNode(struct list* self, int value){
+    struct list_node* node;
+    node = self->first;
+    if(node->state == value){
+        delFirstNode(self);
+    }
+    else {
+        while (node->next != NULL && node->next->state != value) {
+            node = node->next;
+        }
+        if (node->next != NULL) {
+            struct list *tmp = malloc(sizeof(struct list));
+            tmp->first = node->next->next;
+            free(node->next);
+            node->next = NULL;
+            node->next = tmp->first;
+            tmp->first = NULL;
+            free(tmp);
+        }
     }
 }
 
@@ -97,17 +111,18 @@ size_t listSize(const struct list *self){
 }
 
 /* recherche d'un node
- * param entrée : pointeur sur une liste, entier successeur recherché
- * retourne : node précédent le node recherché
+ * param entrée : pointeur sur une liste, entier recherché
+ * retourne : le node recherché
  * */
 struct list_node* searchNode(const struct list *self, int value){
-    //TODO what happens when the node searched for is the first
     struct list_node* visit;
     visit = self->first;
-    while(visit->next != NULL && visit->next->state != value){
+    while(visit->state != value && visit->next != NULL){
         visit = visit->next;
     }
-    //renvoie le node précédent celui recherché, pour pouvoir supprimer celui qui est recherché avec delAfterNode
+    if(visit->state != value){
+        return NULL;
+    }
     return visit;
 }
 /* écriture de la liste

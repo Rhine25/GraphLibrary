@@ -5,17 +5,30 @@
 #include "../include/main.h"
 #include "../include/menu.h"
 
+#define PATH_LENGTH 50
+
 struct graph creation(){
     int length = 3;
     char nbMaxSommets[length];
     printf("Création d'un graphe :\n  Nombre de sommets maximum : ");
     getInput(nbMaxSommets,length+1);
-    printf("Le graphe aura %d\n", atoi(nbMaxSommets));
+    int nb = atoi(nbMaxSommets);
+    while(nb <= 0){
+        printf("La valeur que vous avez rentrée n'est pas acceptable, veuillez réessayer\n");
+        getInput(nbMaxSommets,length+1);
+        nb = atoi(nbMaxSommets);
+    }
+    printf("Le graphe aura %d sommets\n", nb);
     length = 1;
     char orientation[length];
     printf("  Le graphe est-il orienté ? Y/n ");
     getInput(orientation, length+1);
-    if(strcmp(orientation,"n") == 0){
+    while(strcmp(orientation,"N") != 0 && strcmp(orientation,"n") != 0 &&
+          strcmp(orientation,"Y") != 0 && strcmp(orientation,"y") != 0 && strcmp(orientation,"") != 0){
+        printf("La valeur rentrée n'est pas acceptable, veuillez réessayer\n");
+        getInput(orientation, length+1);
+    }
+    if(strcmp(orientation,"N") == 0 || strcmp(orientation,"n") == 0){
         printf("Le graphe sera non orienté\n");
         return createGraphe(0, atoi(nbMaxSommets));
         //graphe = &g;
@@ -23,26 +36,60 @@ struct graph creation(){
     else{
         printf("Le graphe sera orienté\n");
         return createGraphe(1, atoi(nbMaxSommets));
-        //graphe = &g;
     }
 }
 
 void lecture(struct graph* graphe){
     //TODO
-    printf("Non implemented yet, sorry\n");
+    //printf("Non implemented yet, sorry\n");
+    char str[PATH_LENGTH];
+    askForStrInput(str, PATH_LENGTH, "Où se trouve le graphe ?\n");
+    fprintf(stderr,"%s\n",str);
+    readGraphe(str, graphe);
 }
 
 void insertionSommet(struct graph* graphe){
-    addVertex(graphe);
-    printf("Nouveau sommet créé\n");
+    int i = addVertex(graphe);
+    if(belongsToGrapheState(graphe, i)) {
+        printf("Nouveau sommet créé : %d\n", i);
+    }
+    else{
+        printf("Le nouveau sommet n'a pas pu être créé : ");
+        if(i == graphe->nbMaxSommets){
+            printf("le nombre maximal de sommets à été atteint\n");
+        }
+        else{
+            printf("erreur inconnue\n");
+        }
+    }
 }
 
 void insertionArete(struct graph* graphe){
     int src = askForIntInput(NBMAXDIGITS,"De : ");
+    while(src < 0){
+        src = askForIntInput(NBMAXDIGITS,"Veuillez rentrer une valeur acceptable\n");
+    }
     int dest = askForIntInput(NBMAXDIGITS,"Vers : ");
+    while(dest < 0){
+        src = askForIntInput(NBMAXDIGITS,"Veuillez rentrer une valeur acceptable\n");
+    }
     int poids = askForIntInput(NBMAXDIGITS,"De poids : ");
-    addEdge(graphe, src, dest, poids);
-    printf("Nouvelle arête créée\n");
+    int c = addEdge(graphe, src, dest, poids);
+    if(c ==0){
+        printf("Nouvelle arête créée\n");
+    }
+    else{
+        printf("Erreur lors de la création de l'arête. ");
+        if(c == 3){
+            printf("L'arête existe déjà.\n");
+        }
+            else if(c == 1){
+            printf("Les états n'existent pas.\n");
+        }
+        else{
+            printf("\n");
+        }
+    }
 }
 
 void suppressionSommet(struct graph* graphe){
@@ -63,15 +110,15 @@ void affichage(struct graph* graphe){
 }
 
 void sauvegarde(struct graph* graphe){
-    char filename[50];
-    askForStrInput(filename,"Où souhaitez-vous sauvegarder le graphe ?");
-    /*FILE* f = fopen(filename, "w");
-    if(f == NULL){
-        fprintf(stderr,"Could not open file %s\n", filename);
-        affichageMenuSeparateur();
-    }*/
-    saveGraphe(graphe, filename);
-    printf("Graphe sauvegardé\n");
+    char filename[PATH_LENGTH] = {};
+    askForStrInput(filename, PATH_LENGTH, "Où souhaitez-vous sauvegarder le graphe ?");
+    int c = saveGraphe(graphe, filename);
+    if(c == 0) {
+        printf("Graphe sauvegardé\n");
+    }
+    else if(c == 1){
+        printf("Le graphe n'a pas pu être sauvegardé\n");
+    }
 }
 
 void quitter(struct graph* graphe){
@@ -100,10 +147,14 @@ void affichageMenuInit() {
             break;
         case 1 :
             lecture(&graphe);
-            affichageMenuSeparateur(&graphe);
+            affichageMenuInit();
             break;
         case 2 :
-            quitter(&graphe);
+            quitter(NULL);
+            break;
+        default:
+            printf("Désolé, je n'ai pas compris.\n");
+            affichageMenuInit();
             break;
     }
 }
@@ -111,9 +162,9 @@ void affichageMenuInit() {
 void affichageMenuAction(struct graph* graphe){
     printf("0 : Afficher le graphe\n");
     printf("1 : Ajouter un sommet au graphe\n");
-    printf("2 : Ajouter une transition au graphe\n");
+    printf("2 : Ajouter une arête au graphe\n");
     printf("3 : Supprimer un sommet au graphe\n");
-    printf("4 : Supprimer une transition au graphe\n");
+    printf("4 : Supprimer une arête au graphe\n");
     printf("5 : Sauvegarder le graphe et quitter\n");
     printf("6 : Quitter\n");
 
@@ -146,6 +197,10 @@ void affichageMenuAction(struct graph* graphe){
         case 6 :
             quitter(graphe);
             break;
+        default:
+            printf("Désolé, je n'ai pas compris.\n");
+            affichageMenuAction(graphe);
+            break;
     }
 }
 
@@ -154,15 +209,25 @@ void affichageMenuSeparateur(struct graph* graphe){
     affichageMenuAction(graphe);
 }
 
-void askForStrInput(char* str, char* message){
-    int length = strlen(str);
+void askForStrInput(char* str, int maxLength, char* message){
     printf("%s \n", message);
-    getInput(str,length+1);
+    getInput(str,maxLength+1);
 }
 
 int askForIntInput(int maxLength, char* message){
     char str[maxLength];
     printf("%s \n", message);
     getInput(str, maxLength+1);
-    return atoi(str);
+    int value = atoi(str);
+    if(value == 0 && strcmp(str,"0") != 0){
+        value = askForIntInput(maxLength, "Veuillez entrer une valeur acceptable\n");
+    }
+    return value;
+}
+
+int isPositiveNumber(int n){
+    if(n >= 0){
+        return 1;
+    }
+    return 0;
 }

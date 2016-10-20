@@ -1,9 +1,6 @@
 #ifndef MENU_H
 #define MENU_H
 
-static const int NBMAXSOMMETS = 999;
-static const int NBMAXDIGITS = 3;
-
 struct graph creation();
 void lecture(struct graph*);
 void insertionSommet(struct graph*);
@@ -17,7 +14,8 @@ void menu();
 void affichageMenuInit();
 void affichageMenuAction(struct graph* graphe);
 void affichageMenuSeparateur(struct graph* graphe);
-void askForStrInput(char* str, char* message);
+void askForStrInput(char* str, int maxLength, char* message);
 int askForIntInput(int maxLength, char* message);
+int isPositiveNumber(int);
 
 #endif //MENU_H

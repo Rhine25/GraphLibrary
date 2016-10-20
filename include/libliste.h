@@ -24,10 +24,13 @@ struct list createList();
 void destroyList(struct list*);
 
 //ajout
-void addNode(struct list*, int voisin, int poids);
+int addNode(struct list*, int voisin, int poids);
 
 //suppression après l'élément courant
 void delNodeAfter(struct list_node*);
+
+//supression de la valeur
+void delNode(struct list*, int value);
 
 //suppression du premier node
 void delFirstNode(struct list*);
