@@ -18,7 +18,7 @@ void destroyGraphe(struct graph*);
 void createVertex(struct graph*, int);
 
 //lecture d'un graphe dans un fichier texte
-void readGraphe(const char* fileName, struct graph*);
+struct graph readGraphe(const char* fileName);
 
 //inserer un nouveau sommet
 int addVertex(struct graph*);

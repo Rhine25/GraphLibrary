@@ -2,7 +2,7 @@
 #define MENU_H
 
 struct graph creation();
-void lecture(struct graph*);
+struct graph lecture();
 void insertionSommet(struct graph*);
 void insertionArete(struct graph*);
 void suppressionSommet(struct graph*);

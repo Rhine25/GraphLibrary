@@ -39,13 +39,13 @@ struct graph creation(){
     }
 }
 
-void lecture(struct graph* graphe){
+struct graph lecture(){
     //TODO
     //printf("Non implemented yet, sorry\n");
     char str[PATH_LENGTH];
     askForStrInput(str, PATH_LENGTH, "Où se trouve le graphe ?\n");
     fprintf(stderr,"%s\n",str);
-    readGraphe(str, graphe);
+    return readGraphe(str);
 }
 
 void insertionSommet(struct graph* graphe){
@@ -146,8 +146,8 @@ void affichageMenuInit() {
             affichageMenuSeparateur(&graphe);
             break;
         case 1 :
-            lecture(&graphe);
-            affichageMenuInit();
+            graphe = lecture();
+            affichageMenuSeparateur(&graphe);
             break;
         case 2 :
             quitter(NULL);

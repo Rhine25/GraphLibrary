@@ -46,13 +46,13 @@ void createVertex(struct graph *self, int sommet){
 /* creation d'un graphe
  * param entrée :
  * */
-void readGraphe(const char* fileName, struct graph* graphe){
-
+struct graph readGraphe(const char* fileName){
+    struct graph g;
     //Premier parcours : création du graphe avec ses sommets
     FILE* f = fopen(fileName, "r");
     if(f == NULL){
         fprintf(stderr,"Could not open file %s\n",fileName);
-        return;
+        return g;
     }
     size_t max = 100; //max size of path to file
     char str[100]; //path to file
@@ -60,93 +60,82 @@ void readGraphe(const char* fileName, struct graph* graphe){
     int oriente = 0; //orientation found in file
     if(fgets(str, max, f) == NULL){ //# nombre maximum de sommets
         fprintf(stderr, "Erreur lors de l'importation 0\n");
-        return;
+        return g;
     }
     fgets(str, max, f); //get nb sommets
     maxSommets = atoi(str);
     if(fgets(str, max, f) == NULL){ //# oriente
         fprintf(stderr, "Erreur lors de l'importation 1\n");
-        return;
+        return g;
     }
     fgets(str, max, f); //get orientation
-    if(strcmp(str,"o") == 0){
+    if(str[0] == 'o'){
         oriente = 1;
     }
-    struct graph g = createGraphe(oriente, maxSommets);
-    graphe = &g;
+    g = createGraphe(oriente, maxSommets);
     if(fgets(str, max, f) == NULL){ //# sommets : voisins
         fprintf(stderr, "Erreur lors de l'importation");
-        return;
+        return g;
     }
     while(fgets(str, max, f) != NULL) { //création des sommets
-        addVertex(graphe);
+        addVertex(&g);
     }
     fclose(f);
 
     //Second parcours : création des arêtes du graphe
     f = fopen(fileName, "r");
     int i = 0; //variable de compteur
-    int sommet = 0; //compteur de sommet courant
-    for(i = 0; i<4; i++){ //on retourne aux specs des sommets
+    for(i = 0; i<5; i++){ //on retourne aux specs des sommets
         fgets(str, max, f);
     }
 
-    /*Pour chaque sommet : OK
-        * jusqu'à tomber la fin de ligne : OK
-            * cherche une ( OK
-            * lis la valeur jusqu'à / et stocke dans dest tab OK
-            * lis la valeur jusqu'à ) et stocke dans poids tab
-     * création des aretes depuis la fin des tableaux
-     * */
+    int sommet = 0; //compteur de sommet courant
+    int nb = 0; //numéro de transition
+    int dest[100] = {}; //tableau des destinations pour chaque arete
+    int poids[100] = {}; // tableau des poids pour chaque arete
     while(fgets(str, max, f) != NULL) { //pour chaque sommet
-        int dest[100]; //tableau des destinations pour chaque arete
-        int poids[100]; // tableau des poids pour chaque arete
-        int nb = 0; //numéro de transition
-        int j = 0; //variable compteur
-        int tmp; //debug
-        while((tmp=fgetc(f)) != '\n') { //jusqu'à fin de ligne sommet
-            fprintf(stderr,"Cherche fin de ligne : '%c'\n", (unsigned char)tmp);
+        int j = 0; //variable compteur indice dans les deststr et poidsstr
+        int l = 0; //compteur indice dans str
+        int strln = strlen(str) - 1;
+        while(l<strln-1) { //jusqu'à fin de ligne sommet
             //-------------------------Destination----------------------
             char deststr[NBMAXDIGITS] = ""; //string numéro de sommet destination
             char poidsstr[10] = ""; //string poids de l'arete
-            while ((tmp = fgetc(f)) != '(' && tmp != EOF) { //jusqu'à (
-                fprintf(stderr,"Cherche '(' : '%c'\n", (unsigned char)tmp);
+
+            while (str[l] != '(' && l<strln) { //jusqu'à (
+                l++;
             }
-            fprintf(stderr,"Found '(' : '%c'\n", (unsigned char)tmp);
-            while ((tmp = fgetc(f)) != '/' && tmp != EOF) { //jusqu'à /
-                fprintf(stderr,"Cherche '/' : '%c'\n", (unsigned char)tmp);
-                deststr[j] = tmp;
+            if(l<strln){
+                l++;
+            }
+            j = 0;
+            while (str[l] != '/' && l<strln) { //jusqu'à /
+                deststr[j] = str[l];
                 j++;
+                l++;
             }
+            if(l< strln){l++;}
             dest[nb] = atoi(deststr);
-            fprintf(stderr, "J'ai trouvé comme destination : %d\n", dest[nb]);
+            //fprintf(stderr,"nb = %d, deststr = '%s', dest[nb] = %d, j = %d, l = %d, strlen = %d\n", nb, deststr, dest[nb], j, l, strln);
+            //fprintf(stderr, "destination : %d, ", dest[nb]);
             //-------------------------Poids----------------------------
             j = 0;
-            while ((tmp = fgetc(f)) != ')') { //jusqu'à )
-                fprintf(stderr,"Cherche ')' : '%c'\n", (unsigned char)tmp);
-                poidsstr[j] = tmp;
+            while (str[l] != ')' && l<strln) { //jusqu'à )
+                poidsstr[j] = str[l];
                 j++;
+                l++;
             }
             poids[nb] = atoi(poidsstr);
             nb++;
         }
-        for(;nb>=0;nb--){ //ajout des aretes provenant du sommet courant au graphe
-            addEdge(graphe, sommet, dest[nb], poids[nb]);
+        for(nb = nb-1;nb>=0;nb--){ //ajout des aretes provenant du sommet courant au graphe
+            addEdge(&g, sommet, dest[nb], poids[nb]);
         }
+        nb = 0;
         sommet ++;
     }
-    printGraphe(graphe,stdout);
-    /*
-    # nombre maximum de sommets
-    4
-    # oriente
-    n
-    # sommets : voisins
-    0 : (2/4), (-1/0)
-    1 : (3/5), (-1/0)
-    2 : (3/3), (0/4), (-1/0)
-    3 : (1/5), (2/3), (-1/0)
-    */
+    fclose(f);
+    return g;
 }
 
 //inserer un nouveau sommet
