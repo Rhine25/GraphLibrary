@@ -16,16 +16,19 @@ struct list createList(){
 /* destruction d'une liste
  * param entrée : un pointeur sur la liste à supprimer
  * libère chaque node jusqu'à que la liste soit vide
+ * retourne : 0
  * */
-void destroyList(struct list *self){
+int destroyList(struct list *self){
     while(!isEmptyList(self)){
         delFirstNode(self);
     }
+    return 0;
 }
 
 /* ajout d'un node en début de liste
  * param entrée : pointeur sur une liste, valeurs à affecter au node
  * crée un nouveau node et le place au début de la liste
+ * retourne : 0 ou 1 si le node n'a pas pu être ajouté
  * */
 int addNode(struct list *self, int voisin, int poids){ //insertion en début de la liste chainée
     struct list_node *other = malloc(sizeof(struct list_node));
@@ -39,15 +42,15 @@ int addNode(struct list *self, int voisin, int poids){ //insertion en début de 
     return 0;
 }
 
-/*suppression d'un node spécifique
+/* suppression d'un node spécifique
  * param entrée : pointeur sur une liste, entier valeur du node à supprimer
- *
+ * retourne : entier
  */
-void delNode(struct list* self, int value){
+int delNode(struct list* self, int value){
     struct list_node* node;
     node = self->first;
     if(node->state == value){
-        delFirstNode(self);
+        return delFirstNode(self);
     }
     else {
         while (node->next != NULL && node->next->state != value) {
@@ -61,15 +64,18 @@ void delNode(struct list* self, int value){
             node->next = tmp->first;
             tmp->first = NULL;
             free(tmp);
+            return 0;
         }
+        return 1;
     }
 }
 
 /* suppression du premier node de la liste
  * param entrée : pointeur sur une liste
  * supprime le premier node et raccroche la fin de la liste
+ * retourne : 0 ou 1
  * */
-void delFirstNode(struct list *self){
+int delFirstNode(struct list *self){
     if(!isEmptyList(self)) {
         struct list_node *tmp = malloc(sizeof(struct list_node));
         tmp->next = self->first->next;
@@ -78,7 +84,9 @@ void delFirstNode(struct list *self){
         self->first = tmp->next;
         tmp->next = NULL;
         free(tmp);
+        return 0;
     }
+    return 1;
 }
 
 /* test du vide

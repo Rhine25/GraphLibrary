@@ -13,9 +13,9 @@ struct graph{
 //création du graphe avec un nombre de sommet demandé
 struct graph createGraphe(int orientation, int maxSommets);
 
-void destroyGraphe(struct graph*);
+int destroyGraphe(struct graph*);
 
-void createVertex(struct graph*, int);
+int createVertex(struct graph*, int);
 
 //lecture d'un graphe dans un fichier texte
 struct graph readGraphe(const char* fileName);
@@ -27,16 +27,10 @@ int addVertex(struct graph*);
 int addEdge(struct graph*, int, int, int);
 
 //supprimer un sommet
-void delVertex(struct graph*, int v);
+int delVertex(struct graph*, int v);
 
 //supprimer une arete entre deux somets d'un graf
-void delEdge(struct graph*, int src, int dest);
-
-//parcours en profondeur
-void dfs(const struct graph *self);
-
-//parcours en largeur
-void bfs(const struct graph *self);
+int delEdge(struct graph*, int src, int dest);
 
 //afficher le graphe dans le meme format que celui du fichier textee d'entrée
 void printGraphe(const struct graph*, FILE* out);
@@ -49,5 +43,14 @@ int belongsToGrapheState(const struct graph*, int state);
 int belongsToGrapheEdge(const struct graph*, int src, int dest);
 
 int isEmptyGraphe(const struct graph*);
+
+//nombre de sommets du graphe
+int lengthGraphe(const struct graph *self);
+
+//parcours en profondeur
+/*void dfs(const struct graph *self, int state);
+
+//parcours en largeur
+void bfs(const struct graph *self);*/
 
 #endif

@@ -21,7 +21,7 @@ struct list {
 struct list createList();
 
 //destruction
-void destroyList(struct list*);
+int destroyList(struct list*);
 
 //ajout
 int addNode(struct list*, int voisin, int poids);
@@ -30,10 +30,10 @@ int addNode(struct list*, int voisin, int poids);
 void delNodeAfter(struct list_node*);
 
 //supression de la valeur
-void delNode(struct list*, int value);
+int delNode(struct list*, int value);
 
 //suppression du premier node
-void delFirstNode(struct list*);
+int delFirstNode(struct list*);
 
 //vide
 int isEmptyList(const struct list*);

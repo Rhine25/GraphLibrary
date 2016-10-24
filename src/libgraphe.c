@@ -6,8 +6,9 @@
 #include "../include/libliste.h"
 
 /* creation d'un graphe
- * param entrée :
- * retourne :
+ * param entrée : entier orientation, entier nombre max de sommets
+ * crée le graphe, alloue la mémoire pour les listes d'adjacence
+ * retourne : le graphe créé
  * */
 struct graph createGraphe(int oriente, int maxSommets){
     struct graph self;
@@ -22,29 +23,37 @@ struct graph createGraphe(int oriente, int maxSommets){
 }
 
 /* creation d'un graphe
- * param entrée :
+ * param entrée : pointeur sur le graphe à supprimer
+ * libère la mémoire des listes d'adjacence et du graphe
+ * retourne : entier
  * */
-void destroyGraphe(struct graph *self){
+int destroyGraphe(struct graph *self){
     int i = 0;
+    int c = 0;
     for(i=0; i<self->nbMaxSommets; i++){ //on désalloue chaque liste
-        destroyList(&self->listesAdjacences[i]);
+        c += destroyList(&self->listesAdjacences[i]);
     }
     free(self->listesAdjacences);
     self->listesAdjacences = NULL;
+    return c;
 }
 
 /* creation d'un graphe
- * param entrée :
+ * param entrée : pointeur sur le graphe, entier sommet à ajouter
+ * ajoute un node à la liste d'adjacence du sommet
+ * retourne : entier
  * */
-void createVertex(struct graph *self, int sommet){
+int createVertex(struct graph *self, int sommet){
     if(sommet<self->nbMaxSommets && isEmptyList(&self->listesAdjacences[sommet])) {
-        addNode(&self->listesAdjacences[sommet], -1, 0);
+        return addNode(&self->listesAdjacences[sommet], -1, 0);
     }
+    return 1;
 }
 
-//lecture d'un graphe dans un fichier texte
-/* creation d'un graphe
- * param entrée :
+/* lecture d'un graphe dans un fichier texte
+ * param entrée : le nom du fichier dans lequel est le graphe à importer
+ * crée un graphe à partir d'un fichier
+ * retourne le graphe
  * */
 struct graph readGraphe(const char* fileName){
     struct graph g;
@@ -116,8 +125,7 @@ struct graph readGraphe(const char* fileName){
             }
             if(l< strln){l++;}
             dest[nb] = atoi(deststr);
-            //fprintf(stderr,"nb = %d, deststr = '%s', dest[nb] = %d, j = %d, l = %d, strlen = %d\n", nb, deststr, dest[nb], j, l, strln);
-            //fprintf(stderr, "destination : %d, ", dest[nb]);
+
             //-------------------------Poids----------------------------
             j = 0;
             while (str[l] != ')' && l<strln) { //jusqu'à )
@@ -138,9 +146,10 @@ struct graph readGraphe(const char* fileName){
     return g;
 }
 
-//inserer un nouveau sommet
-/* creation d'un graphe
- * param entrée :
+/* inserer un nouveau sommet
+ * param entrée : pointeur sur le graphe
+ * parcourt le graphe jusqu'à un sommet non attribué, crée le sommet
+ * retourne : entier sommet créé
  * */
 int addVertex(struct graph *self){
     int i = 0;
@@ -151,9 +160,9 @@ int addVertex(struct graph *self){
     return i;
 }
 
-//inserer une arete entre deux somets d'un graf
-/* creation d'un graphe
- * param entrée :
+/* inserer une arete entre deux sommets d'un graphe
+ * param entrée : pointeur sur le graphe, entiers source destination et poids de l'arete
+ * retourne : entier
  * */
 int addEdge(struct graph* self, int src, int dest, int poids){
     int c = 1;
@@ -163,17 +172,21 @@ int addEdge(struct graph* self, int src, int dest, int poids){
     if(belongsToGrapheState(self, src) && belongsToGrapheState(self, dest)) {
         c = addNode(&self->listesAdjacences[src], dest, poids);
     }
+    else{
+        return 1;
+    }
     if(!self->estOriente && !belongsToGrapheEdge(self, dest, src)){
         addEdge(self, dest, src, poids);
     }
     return c;
 }
 
-//supprimer un sommet
-/* creation d'un graphe
- * param entrée :
+/* supprimer un sommet
+ * param entrée : pointeur sur le graphe, entier sommet à supprimer
+ * libère la mémoire des nodes et des listes
+ * retourne : 0 ou 1
  * */
-void delVertex(struct graph *self, int state){
+int delVertex(struct graph *self, int state){
     if(belongsToGrapheState(self, state)) {
         int i;
         for(i = 0; i<self->nbMaxSommets; i++){
@@ -182,25 +195,31 @@ void delVertex(struct graph *self, int state){
             }
         }
         destroyList(&self->listesAdjacences[state]);
+        return 0;
+    }
+    else{
+        return 1;
     }
 }
 
-//supprimer une arete entre deux sommets d'un graphe
-/* creation d'un graphe
- * param entrée :
+/* supprimer une arete entre deux sommets d'un graphe
+ * param entrée : pointeur sur le graphe
+ * supprime l'arete ainsi que l'arete inverse si le graphe n'est pas oriente
+ * retourne : entier
  * */
-void delEdge(struct graph *self, int src, int dest){
+int delEdge(struct graph *self, int src, int dest){
+    int c = 0;
     if(belongsToGrapheState(self, src) && belongsToGrapheState(self, dest)) {
-        delNode(&self->listesAdjacences[src], dest);
+        c += delNode(&self->listesAdjacences[src], dest);
     }
-    if(self->estOriente){
-        delEdge(self, dest, src);
+    if(!self->estOriente){
+        c += delNode(&self->listesAdjacences[dest], src);
     }
+    return c;
 }
 
-//afficher le graphe dans le meme format que celui du fichier textee d'entrée
-/* creation d'un graphe
- * param entrée :
+/* afficher le graphe dans le meme format que celui du fichier texte d'entrée
+ * param entrée : pointeur sur le graphe, fichier de sortie de l'écriture
  * */
 void printGraphe(const struct graph *self, FILE* out){
     if(out == NULL){
@@ -222,11 +241,13 @@ void printGraphe(const struct graph *self, FILE* out){
     }
 }
 
-//enregistrer le graf dans un fichier texte
-/* creation d'un graphe
- * param entrée :
+/* enregistrer le graf dans un fichier texte
+ * param entrée : pointeur sur le graphe, fichier de sortie
+ * ouvre le fichier, écrit le graphe, ferme le fichier
+ * retourne : 0 ou 1
  * */
 int saveGraphe(const struct graph *self, const char* fileName){
+    //TODO check if file exists, ask for confirmation to overwrite it
     FILE* f = fopen(fileName, "w");
     if(f == NULL){
         fprintf(stderr,"Could not open file %s\n",fileName);
@@ -237,6 +258,10 @@ int saveGraphe(const struct graph *self, const char* fileName){
     return 0;
 }
 
+/* vérifie si un sommet appartient au graphe
+ * param entrée : pointeur sur le graphe, entier sommet
+ * retourne : 0 ou 1
+ */
 int belongsToGrapheState(const struct graph *self, int state){
     if(state < self->nbMaxSommets && !isEmptyList(&self->listesAdjacences[state])){
         return 1;
@@ -244,6 +269,10 @@ int belongsToGrapheState(const struct graph *self, int state){
     return 0;
 }
 
+/* vérifie si une arete appartient au graphe
+ * param entrée : pointeur sur le graphe, entiers source et destination de l'arete
+ * retourne : 0 ou 1
+ */
 int belongsToGrapheEdge(const struct graph *self, int src, int dest){
     if(belongsToGrapheState(self, src) && belongsToGrapheState(self, dest)){
         struct list_node *tmp;
@@ -255,12 +284,52 @@ int belongsToGrapheEdge(const struct graph *self, int src, int dest){
     return 0;
 }
 
+/* vérifie si le graphe est vide
+ * param entrée : pointeur sur le graphe
+ * retourne : 0 ou 1
+ */
 int isEmptyGraphe(const struct graph *self){
     int i;
     for(i=0;i<self->nbMaxSommets;i++){
         if(belongsToGrapheState(self,i)){
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
+
+/* compte le nombre de sommets d'un graphe
+ * param entrée : pointeur sur le graphe
+ * retourne : entier nombre de sommets
+ */
+int lengthGraphe(const struct graph *self){
+    int l = 0;
+    while(self->listesAdjacences[l].first != NULL){
+        l ++;
+    }
+    return l;
+}
+
+//parcours en profondeur
+/*void dfs(const struct graph *self, int state){
+    int visited[lengthGraphe(self)] = {};
+    subDfs(self, visited, state);
+    printf("\n");
+}
+
+void subDfs(const struct graph *self, int *visited, int state){
+    visited[state] = 1;
+    printf("%d ", state);
+    //pour tous les adjacents
+    struct list *tmp = self->listesAdjacences[state].first;
+    while(tmp != NULL && tmp->first->next != NULL) {
+        int adjacent = tmp->first->state;
+        tmp = tmp->first->next;
+        if (visited[adjacent] == 0) {
+            subDfs(self, visited, adjacent);
+        }
+    }
+}
+
+//parcours en largeur
+void bfs(const struct graph *self);*/
