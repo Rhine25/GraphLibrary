@@ -189,11 +189,13 @@ int addEdge(struct graph* self, int src, int dest, int poids){
 int delVertex(struct graph *self, int state){
     if(belongsToGrapheState(self, state)) {
         int i;
+        //suppression des arêtes qui vont vers le sommet à supprimer
         for(i = 0; i<self->nbMaxSommets; i++){
             if(!isEmptyList(&self->listesAdjacences[i])){
                 delNode(&self->listesAdjacences[i],state);
             }
         }
+        //suppression du sommet
         destroyList(&self->listesAdjacences[state]);
         return 0;
     }
@@ -211,6 +213,9 @@ int delEdge(struct graph *self, int src, int dest){
     int c = 0;
     if(belongsToGrapheState(self, src) && belongsToGrapheState(self, dest)) {
         c += delNode(&self->listesAdjacences[src], dest);
+    }
+    else{
+        return 4;
     }
     if(!self->estOriente){
         c += delNode(&self->listesAdjacences[dest], src);
@@ -235,9 +240,10 @@ void printGraphe(const struct graph *self, FILE* out){
     }
     fprintf(out,"# sommets : voisins\n");
     int i = 0;
-    while(belongsToGrapheState(self, i)) {
-        fprintf(out,"%i : %s", i, listToString(&self->listesAdjacences[i]));
-        i++;
+    for(i = 0; i<self->nbMaxSommets; i++) {
+        if(belongsToGrapheState(self, i)) {
+            fprintf(out, "%i : %s", i, listToString(&self->listesAdjacences[i]));
+        }
     }
 }
 

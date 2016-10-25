@@ -90,6 +90,7 @@ void insertionArete(struct graph* graphe){
 }
 
 void suppressionSommet(struct graph* graphe){
+    //TODO suppressing last state segfaults
     int state = askForIntInput(NBMAXDIGITS, "Numéro de l'état : ");
     int c = delVertex(graphe, state);
     if(c == 0){
@@ -101,6 +102,7 @@ void suppressionSommet(struct graph* graphe){
 }
 
 void suppressionArete(struct graph* graphe){
+    //TODO try delete -1
     int src = askForIntInput(NBMAXDIGITS,"De : ");
     int dest = askForIntInput(NBMAXDIGITS,"Vers : ");
     int c = delEdge(graphe, src, dest);
@@ -108,7 +110,16 @@ void suppressionArete(struct graph* graphe){
         fprintf(stdout, "Arête supprimée\n");
     }
     else{
-        fprintf(stderr, "L'arête n'a pas été supprimée.\n");
+        fprintf(stderr, "L'arête n'a pas été supprimée. ");
+        if(c == 4){
+            fprintf(stderr,"Les états n'existent pas.\n");
+        }
+        else if(c == 1){
+            fprintf(stderr,"L'arête n'existe pas.\n");
+        }
+        else{
+            fprintf(stderr,"\n");
+        }
     }
 }
 
@@ -142,6 +153,10 @@ void menu(){
 
 void affichageMenuInit() {
     printf(" ____________________________________\n");
+    printf("|                                    |\n");
+    printf("|     Toutes les valeurs entières    |\n");
+    printf("|     sont tronquées à %d chiffres    |\n", NBMAXDIGITS);
+    printf("|____________________________________|\n");
     printf("|                                    |\n");
     printf("| 0 : Créer un graphe                |\n");
     printf("| 1 : Importer un graphe             |\n");
