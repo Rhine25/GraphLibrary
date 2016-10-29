@@ -1,25 +1,28 @@
 CC=gcc
-CFLAGS=-g -Wall -c -D_DEBUG
+CFLAGS=-g -Wall -c -static -L./include -lgraf
+CLINK=
 
 EXEC=graf
 
 CFILES:=$(wildcard src/*.c)
-CPPFILES:=$(wildcard src/*.cpp)
 COBJ:=$(addprefix obj/,$(notdir $(CFILES:.c=_c.o)))
-CLIBS:=$(wildcard include/*.a)
+COBJLIB:= obj/libliste_c.o obj/libgraphe_c.o
+CLIBS:=$(wildcard include/libgraf.a)
 
-all: $(COBJ) $(CLIBS)
-	$(CC) $^ -o bin/$(EXEC) $(CLIBS)
-	
+all: $(COBJ) include/libgraf.a
+	$(CC) $^ -o bin/$(EXEC) $(CLIBS) $(CLINK)
+
 obj/%_c.o: src/%.c
 	$(CC) $(CFLAGS) $^ -o $@
 
-include/lib.a: obj/libliste_c.o obj/libgraphe_c.o
-	ar -cq include/lib.a obj/libliste_c.o obj/libgraphe_c.o
+include/libgraf.a: $(COBJLIB)
+	ar -cq $@ $^
 
 clean:
 	rm obj/*.o;
 
-mrproper: clean
+cleanlibs:
+	rm include/*.a
+
+mrproper: clean cleanlibs
 	rm bin/$(EXEC)
-	rm $(CLIBS)

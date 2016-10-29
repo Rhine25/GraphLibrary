@@ -318,23 +318,7 @@ int lengthGraphe(const struct graph *self){
 
 //parcours en profondeur
 /*void dfs(const struct graph *self, int state){
-    int visited[lengthGraphe(self)] = {};
-    subDfs(self, visited, state);
-    printf("\n");
-}
 
-void subDfs(const struct graph *self, int *visited, int state){
-    visited[state] = 1;
-    printf("%d ", state);
-    //pour tous les adjacents
-    struct list *tmp = self->listesAdjacences[state].first;
-    while(tmp != NULL && tmp->first->next != NULL) {
-        int adjacent = tmp->first->state;
-        tmp = tmp->first->next;
-        if (visited[adjacent] == 0) {
-            subDfs(self, visited, adjacent);
-        }
-    }
 }
 
 //parcours en largeur

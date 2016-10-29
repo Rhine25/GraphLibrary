@@ -143,12 +143,14 @@ char* listToString(const struct list *self){
     memset(str,0,sizeof(str)); //initialise la string à vide
     struct list visit;
     visit.first = self->first;
-    while(visit.first->next != NULL){
+    while(visit.first->next != NULL && visit.first->next->state != -1){
         strcat(str, nodeToString(visit.first));
         strcat(str, ", ");
         visit.first = visit.first->next;
     }
-    strcat(str, nodeToString(visit.first));
+    if(visit.first->state != -1) {
+        strcat(str, nodeToString(visit.first));
+    }
     strcat(str,"\n");
     return str;
 }
