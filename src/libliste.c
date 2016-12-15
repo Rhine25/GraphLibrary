@@ -30,7 +30,7 @@ int destroyList(struct list *self){
  * crée un nouveau node et le place au début de la liste
  * retourne : 0 ou 1 si le node n'a pas pu être ajouté
  * */
-int addNode(struct list *self, int voisin, int poids){ //insertion en début de la liste chainée
+int addNode(struct list *self, int voisin, float poids){ //insertion en début de la liste chainée
     struct list_node *other = malloc(sizeof(struct list_node));
     if(other == NULL){
         return 1;
@@ -162,6 +162,6 @@ char* listToString(const struct list *self){
 char* nodeToString(const struct list_node *self){
     static char str[20] = "";
     memset(str,0,sizeof(str));
-    sprintf(str, "(%i/%i)", self->state, self->poids);
+    sprintf(str, "(%i/%f)", self->state, self->poids);
     return str;
 }

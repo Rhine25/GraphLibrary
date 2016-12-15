@@ -99,9 +99,9 @@ struct graph readGraphe(const char* fileName){
     }
 
     int sommet = 0; //compteur de sommet courant
-    int nb = 0; //numéro de transition
+    int nb = 0; //numéro d'arête
     int dest[100] = {}; //tableau des destinations pour chaque arete
-    int poids[100] = {}; // tableau des poids pour chaque arete
+    float poids[100] = {}; // tableau des poids pour chaque arete
     while(fgets(str, max, f) != NULL) { //pour chaque sommet
         int j = 0; //variable compteur indice dans les deststr et poidsstr
         int l = 0; //compteur indice dans str
@@ -133,7 +133,7 @@ struct graph readGraphe(const char* fileName){
                 j++;
                 l++;
             }
-            poids[nb] = atoi(poidsstr);
+            poids[nb] = atof(poidsstr);
             nb++;
         }
         for(nb = nb-1;nb>=0;nb--){ //ajout des aretes provenant du sommet courant au graphe
@@ -164,7 +164,7 @@ int addVertex(struct graph *self){
  * param entrée : pointeur sur le graphe, entiers source destination et poids de l'arete
  * retourne : entier
  * */
-int addEdge(struct graph* self, int src, int dest, int poids){
+int addEdge(struct graph* self, int src, int dest, float poids){
     int c = 1;
     if(belongsToGrapheEdge(self, src, dest)){
         return 3;
@@ -317,9 +317,35 @@ int lengthGraphe(const struct graph *self){
 }
 
 //parcours en profondeur
-/*void dfs(const struct graph *self, int state){
+void dfs(const struct graph *self, int state, int* parcours){
+    int i;
+    int visited[self->nbMaxSommets];
+    int parcoursCourant = 0;
+    for(i=0; i<self->nbMaxSommets; i++){
+        visited[i] = 0;
+    }
+    visited[state] = 1;
+    parcours[0] = state;
+    parcoursCourant ++;
+    struct list_node* walk = self->listesAdjacences[state].first;
+    while(walk != NULL){
+        if(visited[walk->state] == 0) {
+            dfs2(self, walk->state, visited, parcours, parcoursCourant);
+        }
+    }
+}
 
+void dfs2(const struct graph *self, int state, int* visited, int* parcours, int parcoursCourant){
+    visited[state] = 1;
+    parcours[0] = state;
+    parcoursCourant ++;
+    struct list_node* walk = self->listesAdjacences[state].first;
+    while(walk != NULL){
+        if(visited[walk->state] == 0) {
+            dfs2(self, walk->state, visited, parcours, parcoursCourant);
+        }
+    }
 }
 
 //parcours en largeur
-void bfs(const struct graph *self);*/
+/*void bfs(const struct graph *self);*/

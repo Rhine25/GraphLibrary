@@ -9,7 +9,7 @@
 
 struct list_node {
 	int state; //name of the current elem
-	int poids;
+	float poids;
 	struct list_node *next;
 };
 
@@ -24,7 +24,7 @@ struct list createList();
 int destroyList(struct list*);
 
 //ajout
-int addNode(struct list*, int voisin, int poids);
+int addNode(struct list*, int voisin, float poids);
 
 //suppression après l'élément courant
 void delNodeAfter(struct list_node*);

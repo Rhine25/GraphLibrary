@@ -78,7 +78,7 @@ void insertionArete(struct graph* graphe){
     while(dest < 0){
         src = askForIntInput(NBMAXDIGITS,"Veuillez rentrer une valeur acceptable : ");
     }
-    int poids = askForIntInput(NBMAXDIGITS,"De poids : ");
+    float poids = askForFloatInput(NBMAXDIGITS,"De poids : ");
     int c = addEdge(graphe, src, dest, poids);
     if(c == 0){
         fprintf(stdout, ANSI_COLOR_GREEN "Nouvelle arête créée\n" ANSI_COLOR_RESET);
@@ -89,7 +89,7 @@ void insertionArete(struct graph* graphe){
             fprintf(stderr, ANSI_COLOR_RED "L'arête existe déjà.\n" ANSI_COLOR_RESET);
         }
         else if(c == 1){
-            fprintf(stderr, ANSI_COLOR_RED "Les états n'existent pas.\n" ANSI_COLOR_RESET);
+            fprintf(stderr, ANSI_COLOR_RED "Les sommets n'existent pas.\n" ANSI_COLOR_RESET);
         }
         else{
             fprintf(stderr, ANSI_COLOR_RED "\n" ANSI_COLOR_RESET);
@@ -99,7 +99,7 @@ void insertionArete(struct graph* graphe){
 
 void suppressionSommet(struct graph* graphe){
     //TODO suppressing last state segfaults
-    int state = askForIntInput(NBMAXDIGITS, "Numéro de l'état : ");
+    int state = askForIntInput(NBMAXDIGITS, "Numéro du sommet : ");
     int c = delVertex(graphe, state);
     if(c == 0){
         fprintf(stdout, ANSI_COLOR_GREEN "Sommet supprimé\n" ANSI_COLOR_RESET);
@@ -120,7 +120,7 @@ void suppressionArete(struct graph* graphe){
     else{
         fprintf(stderr, ANSI_COLOR_RED "L'arête n'a pas été supprimée. " ANSI_COLOR_RESET);
         if(c == 4){
-            fprintf(stderr, ANSI_COLOR_RED "Les états n'existent pas.\n" ANSI_COLOR_RESET);
+            fprintf(stderr, ANSI_COLOR_RED "Les sommets n'existent pas.\n" ANSI_COLOR_RESET);
         }
         else if(c == 1){
             fprintf(stderr, ANSI_COLOR_RED "L'arête n'existe pas.\n" ANSI_COLOR_RESET);
@@ -265,6 +265,17 @@ int askForIntInput(int maxLength, char* message){
     getInput(str, maxLength+1);
     int value = atoi(str);
     if((value == 0 && strcmp(str,"0") != 0) || value < 0){
+        value = askForIntInput(maxLength, "Veuillez entrer une valeur acceptable : ");
+    }
+    return value;
+}
+
+float askForFloatInput(int maxLength, char* message){
+    char str[maxLength];
+    printf("%s", message);
+    getInput(str, maxLength+1);
+    float value = atof(str);
+    if((value == 0.0 && strcmp(str,"0.0") != 0) || value < 0.0){
         value = askForIntInput(maxLength, "Veuillez entrer une valeur acceptable : ");
     }
     return value;

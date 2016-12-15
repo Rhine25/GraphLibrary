@@ -24,7 +24,7 @@ struct graph readGraphe(const char* fileName);
 int addVertex(struct graph*);
 
 //inserer une arete entre deux somets d'un graf
-int addEdge(struct graph*, int, int, int);
+int addEdge(struct graph*, int src, int dest, float poids);
 
 //supprimer un sommet
 int delVertex(struct graph*, int v);
@@ -48,9 +48,10 @@ int isEmptyGraphe(const struct graph*);
 int lengthGraphe(const struct graph *self);
 
 //parcours en profondeur
-/*void dfs(const struct graph *self, int state);
+void dfs(const struct graph *self, int state, int* parcours);
+void dfs2(const struct graph *self, int state, int* visited, int* parcours, int parcoursCourant);
 
 //parcours en largeur
-void bfs(const struct graph *self);*/
+/*void bfs(const struct graph *self);*/
 
 #endif

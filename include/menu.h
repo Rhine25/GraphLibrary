@@ -16,5 +16,6 @@ void affichageMenuAction(struct graph* graphe);
 void affichageMenuSeparateur(struct graph* graphe);
 void askForStrInput(char* str, int maxLength, char* message);
 int askForIntInput(int maxLength, char* message);
+float askForFloatInput(int maxLength, char* message);
 
 #endif //MENU_H
